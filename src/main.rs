@@ -3,6 +3,7 @@ mod camera;
 mod objects;
 mod prelude;
 
+use crate::camera::Camera;
 use crate::objects::hittable::{HitRecord, Hittable};
 use crate::objects::hittable_list::HittableList;
 use crate::objects::sphere::Sphere;
@@ -44,7 +45,7 @@ fn main() -> std::io::Result<()> {
 
     let viewport_upper_left =
         camera_center - Vec3::new(0.0, 0.0, focal_length) - 0.5 * viewport_u - 0.5 * viewport_v;
-    let pixel100_loc = viewport_upper_left + 0.5 * pixel_delta_u + 0.5 * pixel_delta_v;
+    let pixel00_loc = viewport_upper_left + 0.5 * pixel_delta_u + 0.5 * pixel_delta_v;
 
     // Render
     let file = File::create("out.ppm")?;
@@ -59,7 +60,7 @@ fn main() -> std::io::Result<()> {
         show_progress(progress);
         for i in 0..image_width {
             let pixel_center =
-                pixel100_loc + (i as f64 * pixel_delta_u) + (j as f64 * pixel_delta_v);
+                pixel00_loc + (i as f64 * pixel_delta_u) + (j as f64 * pixel_delta_v);
             let ray_direction = pixel_center - camera_center;
             let ray = Ray::new(camera_center, ray_direction);
 
@@ -68,6 +69,20 @@ fn main() -> std::io::Result<()> {
         }
     }
     println!("\nDone!");
+
+    Ok(())
+}
+
+fn new_main() -> std::io::Result<()> {
+    let mut world = HittableList::new();
+
+    world.add(Rc::new(Sphere::new(Point3::new(0.0, 0.0, -1.0), 0.5)));
+    world.add(Rc::new(Sphere::new(Point3::new(0.0, -100.5, -1.0), 100.0)));
+
+    let cam = Camera::new(16.0 / 9.0, 400);
+    let file = File::create("out.ppm")?;
+    let mut writer = BufWriter::new(file);
+    cam.render(&mut writer, &world);
 
     Ok(())
 }
