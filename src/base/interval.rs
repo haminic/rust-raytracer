@@ -7,17 +7,10 @@ pub struct Interval {
 }
 
 impl Interval {
-    pub const EMPTY: Interval = Interval::from(INFINITY, -INFINITY);
-    pub const UNIVERSE: Interval = Interval::from(-INFINITY, INFINITY);
+    pub const EMPTY: Interval = Interval::new(INFINITY, -INFINITY);
+    pub const UNIVERSE: Interval = Interval::new(-INFINITY, INFINITY);
 
-    pub const fn new() -> Self {
-        Interval {
-            min: -INFINITY,
-            max: INFINITY,
-        }
-    }
-
-    pub const fn from(min: f64, max: f64) -> Self {
+    pub const fn new(min: f64, max: f64) -> Self {
         Interval { min, max }
     }
 

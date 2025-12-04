@@ -6,9 +6,14 @@ use crate::prelude::*;
 pub type Color = Vec3;
 
 pub fn write_color(writer: &mut BufWriter<File>, pixel_color: &Color) -> std::io::Result<()> {
-    let ir = (255.999 * pixel_color.x) as i32;
-    let ig = (255.999 * pixel_color.y) as i32;
-    let ib = (255.999 * pixel_color.z) as i32;
+    let r = pixel_color.x;
+    let g = pixel_color.y;
+    let b = pixel_color.z;
 
-    writeln!(writer, "{} {} {}", ir, ig, ib)
+    let intensity = Interval::new(0.000, 0.999);
+    let r_byte = (256.0 * intensity.clamp(r)) as i32;
+    let g_byte = (256.0 * intensity.clamp(g)) as i32;
+    let b_byte = (256.0 * intensity.clamp(b)) as i32;
+
+    writeln!(writer, "{} {} {}", r_byte, g_byte, b_byte)
 }

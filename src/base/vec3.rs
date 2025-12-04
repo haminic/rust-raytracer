@@ -1,3 +1,9 @@
+use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Sub, SubAssign};
+
+use rand_distr::uniform::SampleRange;
+
+use crate::prelude::*;
+
 #[derive(Clone, Copy)]
 pub struct Vec3 {
     pub x: f64,
@@ -10,6 +16,32 @@ pub type Point3 = Vec3;
 impl Vec3 {
     pub const fn new(x: f64, y: f64, z: f64) -> Self {
         Vec3 { x, y, z }
+    }
+
+    pub fn random(range: impl SampleRange<f64> + Clone) -> Vec3 {
+        Vec3::new(
+            random_range(range.clone()),
+            random_range(range.clone()),
+            random_range(range.clone()),
+        )
+    }
+
+    pub fn random_unit_vector() -> Vec3 {
+        Vec3::new(
+            random_normal_f64(),
+            random_normal_f64(),
+            random_normal_f64(),
+        )
+        .unit_vector()
+    }
+
+    pub fn random_on_hemisphere(normal: Vec3) -> Vec3 {
+        let on_unit_sphere = Vec3::random_unit_vector();
+        if on_unit_sphere.dot(normal) > 0.0 {
+            on_unit_sphere
+        } else {
+            -on_unit_sphere
+        }
     }
 
     pub fn length_squared(self) -> f64 {
@@ -37,7 +69,6 @@ impl Vec3 {
     }
 }
 
-use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Sub, SubAssign};
 impl Add for Vec3 {
     type Output = Vec3;
     fn add(self, rhs: Self) -> Self::Output {
