@@ -1,5 +1,4 @@
-use crate::base::vec3::Point3;
-use crate::objects::hittable::{HitRecord, Hittable};
+use crate::objects::prelude::*;
 
 pub struct Sphere {
     center: Point3,
@@ -16,12 +15,7 @@ impl Sphere {
 }
 
 impl Hittable for Sphere {
-    fn hit(
-        &self,
-        ray: &crate::base::ray::Ray,
-        t_range: crate::base::interval::Interval,
-        rec: &mut HitRecord,
-    ) -> bool {
+    fn hit(&self, ray: &Ray, t_range: Interval, rec: &mut HitRecord) -> bool {
         let oc = self.center - ray.origin;
         let a = ray.direction.length_squared();
         // let b = -2.0 * ray.direction.dot(oc);

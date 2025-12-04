@@ -1,7 +1,4 @@
-use std::rc::Rc;
-
-use crate::base::interval::Interval;
-use crate::objects::hittable::Hittable;
+use crate::objects::prelude::*;
 
 pub struct HittableList {
     pub objects: Vec<Rc<dyn Hittable>>,

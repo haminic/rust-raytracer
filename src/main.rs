@@ -1,18 +1,12 @@
 mod base;
+mod camera;
 mod objects;
+mod prelude;
 
-use std::f64::INFINITY;
-use std::fs::File;
-use std::io::{BufWriter, Write, stdout};
-use std::rc::Rc;
-
-use crate::base::color::{Color, write_color};
-use crate::base::interval::Interval;
-use crate::base::ray::Ray;
-use crate::base::vec3::{Point3, Vec3};
 use crate::objects::hittable::{HitRecord, Hittable};
 use crate::objects::hittable_list::HittableList;
 use crate::objects::sphere::Sphere;
+use crate::prelude::*;
 
 fn ray_color(ray: &Ray, world: &dyn Hittable) -> Color {
     let mut rec = HitRecord::new();

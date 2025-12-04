@@ -1,4 +1,4 @@
-use std::f64::INFINITY;
+use crate::prelude::*;
 
 #[derive(Clone, Copy)]
 pub struct Interval {
