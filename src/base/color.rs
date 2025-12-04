@@ -1,6 +1,7 @@
-use crate::vec3::*;
 use std::fs::File;
 use std::io::{BufWriter, Write};
+
+use crate::base::vec3::Vec3;
 
 pub type Color = Vec3;
 

@@ -1,25 +1,22 @@
-mod color;
-mod hittable;
-mod hittable_list;
-mod ray;
-mod sphere;
-mod vec3;
+mod base;
+mod objects;
 
 use std::f64::INFINITY;
 use std::fs::File;
 use std::io::{BufWriter, Write, stdout};
 use std::rc::Rc;
 
-use crate::color::*;
-use crate::hittable::*;
-use crate::hittable_list::*;
-use crate::ray::*;
-use crate::sphere::Sphere;
-use crate::vec3::*;
+use crate::base::color::{Color, write_color};
+use crate::base::interval::Interval;
+use crate::base::ray::Ray;
+use crate::base::vec3::{Point3, Vec3};
+use crate::objects::hittable::{HitRecord, Hittable};
+use crate::objects::hittable_list::HittableList;
+use crate::objects::sphere::Sphere;
 
 fn ray_color(ray: &Ray, world: &dyn Hittable) -> Color {
     let mut rec = HitRecord::new();
-    if world.hit(ray, 0.0..=INFINITY, &mut rec) {
+    if world.hit(ray, Interval::from(0.0, INFINITY), &mut rec) {
         return 0.5 * (rec.normal + Color::new(1.0, 1.0, 1.0));
     }
 
@@ -76,7 +73,6 @@ fn main() -> std::io::Result<()> {
             write_color(&mut writer, &pixel_color)?;
         }
     }
-
     println!("\nDone!");
 
     Ok(())

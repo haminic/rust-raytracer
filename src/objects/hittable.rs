@@ -1,7 +1,6 @@
-use std::ops::RangeInclusive;
-
-use crate::ray::*;
-use crate::vec3::*;
+use crate::base::interval::Interval;
+use crate::base::ray::Ray;
+use crate::base::vec3::{Point3, Vec3};
 
 pub struct HitRecord {
     pub point: Point3,
@@ -31,5 +30,5 @@ impl HitRecord {
 }
 
 pub trait Hittable {
-    fn hit(&self, ray: &Ray, t_range: RangeInclusive<f64>, rec: &mut HitRecord) -> bool;
+    fn hit(&self, ray: &Ray, t_range: Interval, rec: &mut HitRecord) -> bool;
 }
