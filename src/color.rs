@@ -1,10 +1,10 @@
-use crate::vec3::Vec3;
+use crate::vec3::*;
 use std::fs::File;
-use std::io::{BufWriter, Result, Write};
+use std::io::{BufWriter, Write};
 
 pub type Color = Vec3;
 
-pub fn write_color(writer: &mut BufWriter<File>, pixel_color: &Color) -> Result<()> {
+pub fn write_color(writer: &mut BufWriter<File>, pixel_color: &Color) -> std::io::Result<()> {
     let ir = (255.999 * pixel_color.x) as i32;
     let ig = (255.999 * pixel_color.y) as i32;
     let ib = (255.999 * pixel_color.z) as i32;

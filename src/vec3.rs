@@ -12,19 +12,19 @@ impl Vec3 {
         Vec3 { x, y, z }
     }
 
-    pub fn length_squared(&self) -> f64 {
+    pub fn length_squared(self) -> f64 {
         self.x * self.x + self.y * self.y + self.z * self.z
     }
 
-    pub fn length(&self) -> f64 {
+    pub fn length(self) -> f64 {
         self.length_squared().sqrt()
     }
 
-    pub fn dot(&self, other: &Vec3) -> f64 {
+    pub fn dot(self, other: Vec3) -> f64 {
         self.x * other.x + self.y * other.y + self.z * other.z
     }
 
-    pub fn cross(&self, other: &Vec3) -> Vec3 {
+    pub fn cross(self, other: Vec3) -> Vec3 {
         Vec3::new(
             self.y * other.z - self.z * other.y,
             self.x * other.z - self.z * other.x,
@@ -32,8 +32,8 @@ impl Vec3 {
         )
     }
 
-    pub fn unit_vector(&self) -> Vec3 {
-        self.clone() / self.length()
+    pub fn unit_vector(self) -> Vec3 {
+        self / self.length()
     }
 }
 
@@ -59,10 +59,24 @@ impl Mul<f64> for Vec3 {
     }
 }
 
+impl Mul<Vec3> for f64 {
+    type Output = Vec3;
+    fn mul(self, rhs: Vec3) -> Self::Output {
+        Vec3::new(rhs.x * self, rhs.y * self, rhs.z * self)
+    }
+}
+
 impl Div<f64> for Vec3 {
     type Output = Vec3;
     fn div(self, rhs: f64) -> Self::Output {
         Vec3::new(self.x / rhs, self.y / rhs, self.z / rhs)
+    }
+}
+
+impl Div<Vec3> for f64 {
+    type Output = Vec3;
+    fn div(self, rhs: Vec3) -> Self::Output {
+        Vec3::new(rhs.x / self, rhs.y / self, rhs.z / self)
     }
 }
 
