@@ -16,10 +16,13 @@ fn main() -> std::io::Result<()> {
     world.add(Rc::new(Sphere::new(Point3::new(0.0, 0.0, -1.0), 0.5)));
     world.add(Rc::new(Sphere::new(Point3::new(0.0, -100.5, -1.0), 100.0)));
 
-    let cam = Camera::new(16.0 / 9.0, 400, 100);
+    let cam = Camera::new(16.0 / 9.0, 400, 100, 50);
     let file = get_output_file()?;
     let mut writer = BufWriter::new(file);
     cam.render(&mut writer, &world)?;
+
+    // TODO: Show time elapsed.
+    println!("Done.");
 
     Ok(())
 }
