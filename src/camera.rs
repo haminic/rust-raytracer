@@ -84,15 +84,15 @@ impl Camera {
     }
 
     fn get_ray(&self, i: i32, j: i32) -> Ray {
-        // TODO: Incorporate sample_square() for anti-aliasing
-        let pixel_center =
-            self.pixel00_loc + i as f64 * self.pixel_delta_u + j as f64 * self.pixel_delta_v;
-        Ray::new(self.center, pixel_center - self.center)
+        let offset = Camera::sample_square();
+        let pixel_sample = self.pixel00_loc
+            + (i as f64 + offset.x) * self.pixel_delta_u
+            + (j as f64 + offset.y) * self.pixel_delta_v;
+        Ray::new(self.center, pixel_sample - self.center)
     }
 
     fn sample_square() -> Vec3 {
-        // TODO: Sample from that pixel +-0.5 i +- 0.5 j
-        unimplemented!()
+        Vec3::new(random_f64() - 0.5, random_f64() - 0.5, 0.0)
     }
 
     fn ray_color(ray: &Ray, depth: i32, world: &dyn Hittable) -> Color {
@@ -101,7 +101,7 @@ impl Camera {
         }
 
         let mut rec = HitRecord::new();
-        if world.hit(ray, Interval::new(0.001, INFINITY), &mut rec) {
+        if world.hit(ray, Interval::new(1.0, INFINITY), &mut rec) {
             let direction = Vec3::random_on_hemisphere(rec.normal);
             return 0.5 * Camera::ray_color(&Ray::new(rec.point, direction), depth - 1, world);
         }
