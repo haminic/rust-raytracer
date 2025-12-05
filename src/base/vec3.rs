@@ -69,8 +69,7 @@ impl Vec3 {
     }
 
     pub fn reflect(self, normal: Self) -> Self {
-        // TODO
-        unimplemented!()
+        self - 2.0 * self.dot(normal) * normal
     }
 
     // ior = index of refraction, ior_ratio = n1 / n2

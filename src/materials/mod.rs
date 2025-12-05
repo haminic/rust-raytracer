@@ -1,8 +1,10 @@
-pub mod lambertian;
+mod dielectric;
+mod lambertian;
 
 use crate::objects::Hit;
 use crate::prelude::*;
 
+pub use dielectric::Dielectric;
 pub use lambertian::Lambertian;
 
 pub trait Material {
