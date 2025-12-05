@@ -26,7 +26,7 @@ impl Material for Dielectric {
 
         let cannot_refract = ior_ratio * sin_theta > 1.0;
 
-        let direction = if cannot_refract {
+        let direction = if cannot_refract || reflectance(cos_theta, ior_ratio) > random_f64() {
             unit_direction.reflect(hit.normal)
         } else {
             unit_direction.refract(hit.normal, ior_ratio)
@@ -37,4 +37,11 @@ impl Material for Dielectric {
             attenuation,
         })
     }
+}
+
+fn reflectance(cos: f64, ior_ratio: f64) -> f64 {
+    // Schlick's approximation
+    let mut r0 = (1.0 - ior_ratio) / (1.0 + ior_ratio);
+    r0 = r0 * r0;
+    r0 + (1.0 - r0) * (1.0 - cos).powi(5)
 }

@@ -17,7 +17,7 @@ fn main() -> std::io::Result<()> {
 
     let material_ground: Rc<dyn Material> = Rc::new(Lambertian::new(Color::new(0.8, 0.8, 0.0)));
     let material_center: Rc<dyn Material> = Rc::new(Lambertian::new(Color::new(0.1, 0.2, 0.5)));
-    let material_left: Rc<dyn Material> = Rc::new(Dielectric::new(1.0 / 1.333));
+    let material_left: Rc<dyn Material> = Rc::new(Dielectric::new(1.333));
 
     world.add(Rc::new(Sphere::new(
         Point3::new(0.0, 0.0, -1.2),
