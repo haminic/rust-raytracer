@@ -2,12 +2,12 @@ use crate::objects::hittable::{HitRecord, Hittable};
 use crate::prelude::*;
 
 pub struct Camera {
-    aspect_ratio: f64,
-    samples_per_pixel: i32,
-    pixel_samples_scale: f64,
     image_width: i32,
     image_height: i32,
     center: Point3,
+
+    samples_per_pixel: i32,
+    pixel_samples_scale: f64,
 
     pixel00_loc: Point3,
     pixel_delta_u: Vec3,
@@ -16,32 +16,86 @@ pub struct Camera {
 
 impl Camera {
     pub fn new(aspect_ratio: f64, image_width: i32, samples_per_pixel: i32) -> Self {
-        // TODO
-        unimplemented!()
+        let image_height = (image_width as f64 / aspect_ratio) as i32;
+        let center = Point3::new(0.0, 0.0, 0.0);
+
+        let pixel_samples_scale = 1.0 / samples_per_pixel as f64;
+
+        let focal_length = 1.0;
+        let viewport_height = 2.0;
+        let viewport_width = viewport_height * (image_width as f64 / image_height as f64);
+        let camera_center = Point3::new(0.0, 0.0, 0.0);
+
+        let viewport_u = Vec3::new(viewport_width, 0.0, 0.0);
+        let viewport_v = Vec3::new(0.0, -viewport_height, 0.0);
+
+        let pixel_delta_u = viewport_u / image_width as f64;
+        let pixel_delta_v = viewport_v / image_height as f64;
+
+        let viewport_upper_left =
+            camera_center - Vec3::new(0.0, 0.0, focal_length) - 0.5 * viewport_u - 0.5 * viewport_v;
+        let pixel00_loc = viewport_upper_left + 0.5 * pixel_delta_u + 0.5 * pixel_delta_v;
+
+        Camera {
+            image_width,
+            image_height,
+            center,
+
+            samples_per_pixel,
+            pixel_samples_scale,
+
+            pixel00_loc,
+            pixel_delta_u,
+            pixel_delta_v,
+        }
     }
 
-    pub fn render(&self, writer: &mut BufWriter<File>, world: &dyn Hittable) {
-        // TODO
-        unimplemented!()
-    }
+    pub fn render(
+        &self,
+        writer: &mut BufWriter<File>,
+        world: &dyn Hittable,
+    ) -> std::io::Result<()> {
+        writeln!(writer, "P3")?;
+        writeln!(writer, "{} {}", self.image_width, self.image_height)?;
+        writeln!(writer, "255")?;
 
-    fn initialize(&mut self) {
-        // TODO
-        unimplemented!()
+        for j in 0..self.image_height {
+            // TODO: Show progress bar
+            // let progress = j as f64 / (self.image_height - 1) as f64;
+            // show_progress(progress);
+            for i in 0..self.image_width {
+                let mut pixel_color = Color::new(0.0, 0.0, 0.0);
+                for _ in 0..self.samples_per_pixel {
+                    let ray = self.get_ray(i, j);
+                    pixel_color += Camera::ray_color(&ray, world)
+                }
+                write_color(writer, self.pixel_samples_scale * pixel_color)?;
+            }
+        }
+        // println!("\nDone!");
+        Ok(())
     }
 
     fn get_ray(&self, i: i32, j: i32) -> Ray {
-        // TODO
-        unimplemented!()
+        // TODO: Incorporate sample_square() for anti-aliasing
+        let pixel_center =
+            self.pixel00_loc + i as f64 * self.pixel_delta_u + j as f64 * self.pixel_delta_v;
+        Ray::new(self.center, pixel_center - self.center)
     }
 
     fn sample_square() -> Vec3 {
-        // TODO
+        // TODO: Sample from that pixel +-0.5 i +- 0.5 j
         unimplemented!()
     }
 
-    fn ray_color(ray: &Ray, world: &dyn Hittable) {
-        // TODO
-        unimplemented!()
+    fn ray_color(ray: &Ray, world: &dyn Hittable) -> Color {
+        let mut rec = HitRecord::new();
+        if world.hit(ray, Interval::new(0.0, INFINITY), &mut rec) {
+            return 0.5 * (rec.normal + Color::new(1.0, 1.0, 1.0));
+        }
+
+        let unit_direction = ray.direction.unit_vector();
+        let a = 0.5 * (unit_direction.y + 1.0);
+        (1.0 - a) * Color::new(1.0, 1.0, 1.0) + a * Color::new(0.5, 0.7, 1.0)
     }
 }
