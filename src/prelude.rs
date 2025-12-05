@@ -7,10 +7,7 @@ pub use std::f64::consts::PI;
 
 pub use rand::random_range;
 
-pub use crate::base::color::*;
-pub use crate::base::interval::*;
-pub use crate::base::ray::*;
-pub use crate::base::vec3::*;
+pub use crate::base::*;
 
 pub fn random_f64() -> f64 {
     random_range(0.0..1.0)

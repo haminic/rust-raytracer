@@ -1,4 +1,4 @@
-use crate::objects::hittable::{HitRecord, Hittable};
+use crate::objects::{HitRecord, Hittable};
 use crate::prelude::*;
 
 pub struct Camera {
@@ -42,7 +42,7 @@ impl Camera {
             camera_center - Vec3::new(0.0, 0.0, focal_length) - 0.5 * viewport_u - 0.5 * viewport_v;
         let pixel00_loc = viewport_upper_left + 0.5 * pixel_delta_u + 0.5 * pixel_delta_v;
 
-        Camera {
+        Self {
             image_width,
             image_height,
             center,
@@ -101,10 +101,12 @@ fn ray_color(ray: &Ray, depth: i32, world: &dyn Hittable) -> Color {
         return Color::new(0.0, 0.0, 0.0);
     }
 
-    let mut rec = HitRecord::new();
-    if world.hit(ray, Interval::new(0.001, INFINITY), &mut rec) {
-        let direction = rec.normal + Vec3::random_unit_vector();
-        return 0.5 * ray_color(&Ray::new(rec.point, direction), depth - 1, world);
+    if let Some(rec) = world.hit(ray, Interval::new(0.001, INFINITY)) {
+        return if let Some(scatter) = rec.mat.scatter(ray, &rec) {
+            scatter.attenuation * ray_color(&scatter.ray_out, depth - 1, world)
+        } else {
+            Color::new(0.0, 0.0, 0.0)
+        };
     }
 
     let unit_direction = ray.direction.unit_vector();

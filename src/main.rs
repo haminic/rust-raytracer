@@ -1,11 +1,13 @@
 mod base;
 mod camera;
+mod materials;
 mod objects;
 mod prelude;
 
 use std::fs;
 
 use crate::camera::Camera;
+use crate::materials::{Lambertian, Material};
 use crate::objects::hittable_list::HittableList;
 use crate::objects::sphere::Sphere;
 use crate::prelude::*;
@@ -13,8 +15,19 @@ use crate::prelude::*;
 fn main() -> std::io::Result<()> {
     let mut world = HittableList::new();
 
-    world.add(Rc::new(Sphere::new(Point3::new(0.0, 0.0, -1.0), 0.5)));
-    world.add(Rc::new(Sphere::new(Point3::new(0.0, -100.5, -1.0), 100.0)));
+    let material_ground: Rc<dyn Material> = Rc::new(Lambertian::new(Color::new(0.8, 0.8, 0.0)));
+    let material_center: Rc<dyn Material> = Rc::new(Lambertian::new(Color::new(0.1, 0.2, 0.5)));
+
+    world.add(Rc::new(Sphere::new(
+        Point3::new(0.0, 0.0, -1.0),
+        0.5,
+        material_center.clone(),
+    )));
+    world.add(Rc::new(Sphere::new(
+        Point3::new(0.0, -100.5, -1.0),
+        100.0,
+        material_ground.clone(),
+    )));
 
     let cam = Camera::new(16.0 / 9.0, 400, 100, 50);
     let file = get_output_file()?;

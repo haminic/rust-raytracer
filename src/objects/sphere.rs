@@ -1,21 +1,24 @@
-use crate::objects::prelude::*;
+use super::{HitRecord, Hittable, Material};
+use crate::prelude::*;
 
 pub struct Sphere {
     center: Point3,
     radius: f64,
+    mat: Rc<dyn Material>,
 }
 
 impl Sphere {
-    pub const fn new(center: Point3, radius: f64) -> Sphere {
-        Sphere {
+    pub fn new(center: Point3, radius: f64, mat: Rc<dyn Material>) -> Self {
+        Self {
             center,
             radius: radius.max(0.0),
+            mat,
         }
     }
 }
 
 impl Hittable for Sphere {
-    fn hit(&self, ray: &Ray, t_range: Interval, rec: &mut HitRecord) -> bool {
+    fn hit(&self, ray: &Ray, t_range: Interval) -> Option<HitRecord> {
         let oc = self.center - ray.origin;
         let a = ray.direction.length_squared();
         // let b = -2.0 * ray.direction.dot(oc);
@@ -25,7 +28,7 @@ impl Hittable for Sphere {
         // let discriminant = b * b - 4.0 * a * c;
         let discriminant = h * h - a * c;
         if discriminant < 0.0 {
-            return false;
+            return None;
         }
 
         let sqrtd = discriminant.sqrt();
@@ -34,15 +37,13 @@ impl Hittable for Sphere {
         if !t_range.surrounds(root) {
             root = (h + sqrtd) / a;
             if !t_range.surrounds(root) {
-                return false;
+                return None;
             }
         }
 
-        rec.t = root;
-        rec.point = ray.at(rec.t);
-        let outward_normal = (rec.point - self.center) / self.radius;
-        rec.set_face_normal(&ray, outward_normal);
-
-        true
+        let point = ray.at(root);
+        let outward_normal = (point - self.center) / self.radius;
+        let rec = HitRecord::new(&ray, point, outward_normal, self.mat.clone(), root);
+        Some(rec)
     }
 }
