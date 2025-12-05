@@ -4,7 +4,7 @@ use rand_distr::uniform::SampleRange;
 
 use crate::prelude::*;
 
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, Debug)]
 pub struct Vec3 {
     pub x: f64,
     pub y: f64,
@@ -52,6 +52,11 @@ impl Vec3 {
         self.length_squared().sqrt()
     }
 
+    pub fn near_zero(self) -> bool {
+        let s = 1e-8_f64;
+        (self.x.abs() < s) && (self.y.abs() < s) && (self.z.abs() < s)
+    }
+
     pub fn dot(self, other: Self) -> f64 {
         self.x * other.x + self.y * other.y + self.z * other.z
     }
@@ -59,7 +64,7 @@ impl Vec3 {
     pub fn cross(self, other: Self) -> Self {
         Self::new(
             self.y * other.z - self.z * other.y,
-            self.x * other.z - self.z * other.x,
+            self.z * other.x - self.x * other.z,
             self.x * other.y - self.y * other.x,
         )
     }

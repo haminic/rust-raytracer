@@ -1,15 +1,15 @@
-use crate::objects::{Hit, Hittable};
+use crate::objects::Hittable;
 use crate::prelude::*;
 
 pub struct Camera {
-    image_width: i32,
-    image_height: i32,
-    center: Point3,
-
     samples_per_pixel: i32,
     pixel_samples_scale: f64,
     max_depth: i32,
 
+    image_width: i32,
+    image_height: i32,
+
+    center: Point3,
     pixel00_loc: Point3,
     pixel_delta_u: Vec3,
     pixel_delta_v: Vec3,
@@ -21,36 +21,45 @@ impl Camera {
         image_width: i32,
         samples_per_pixel: i32,
         max_depth: i32,
+        vfov: f64,
+        look_from: Point3,
+        look_at: Point3,
+        vup: Vec3,
     ) -> Self {
-        let image_height = (image_width as f64 / aspect_ratio) as i32;
-        let center = Point3::new(0.0, 0.0, 0.0);
+        let image_height = ((image_width as f64 / aspect_ratio) as i32).max(1);
 
         let pixel_samples_scale = 1.0 / samples_per_pixel as f64;
 
-        let focal_length = 1.0;
-        let viewport_height = 2.0;
-        let viewport_width = viewport_height * (image_width as f64 / image_height as f64);
-        let camera_center = Point3::new(0.0, 0.0, 0.0);
+        let center = look_from;
 
-        let viewport_u = Vec3::new(viewport_width, 0.0, 0.0);
-        let viewport_v = Vec3::new(0.0, -viewport_height, 0.0);
+        let focal_length = (look_from - look_at).length();
+        let theta = vfov.to_radians();
+        let h = (theta / 2.0).tan();
+        let viewport_height = 2.0 * h * focal_length;
+        let viewport_width = viewport_height * (image_width as f64 / image_height as f64);
+
+        let w = (look_from - look_at).unit_vector();
+        let u = vup.cross(w).unit_vector();
+        let v = w.cross(u);
+
+        let viewport_u = viewport_width * u;
+        let viewport_v = -viewport_height * v;
 
         let pixel_delta_u = viewport_u / image_width as f64;
         let pixel_delta_v = viewport_v / image_height as f64;
 
-        let viewport_upper_left =
-            camera_center - Vec3::new(0.0, 0.0, focal_length) - 0.5 * viewport_u - 0.5 * viewport_v;
+        let viewport_upper_left = center - focal_length * w - 0.5 * viewport_u - 0.5 * viewport_v;
         let pixel00_loc = viewport_upper_left + 0.5 * pixel_delta_u + 0.5 * pixel_delta_v;
 
         Self {
-            image_width,
-            image_height,
-            center,
-
             samples_per_pixel,
             pixel_samples_scale,
             max_depth,
 
+            image_width,
+            image_height,
+
+            center,
             pixel00_loc,
             pixel_delta_u,
             pixel_delta_v,
@@ -71,6 +80,7 @@ impl Camera {
             // let progress = j as f64 / (self.image_height - 1) as f64;
             // show_progress(progress);
             for i in 0..self.image_width {
+                println!("pixel ({}, {})", i, j);
                 let mut pixel_color = Color::new(0.0, 0.0, 0.0);
                 for _ in 0..self.samples_per_pixel {
                     let ray = self.get_ray(i, j);

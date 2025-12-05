@@ -35,7 +35,16 @@ fn main() -> std::io::Result<()> {
         material_left.clone(),
     )));
 
-    let cam = Camera::new(16.0 / 9.0, 400, 100, 50);
+    let cam = Camera::new(
+        16.0 / 9.0,
+        400,
+        100,
+        50,
+        120.0,
+        Point3::new(-2.0, 2.0, 1.0),
+        Point3::new(0.0, 0.0, -1.0),
+        Vec3::new(0.0, 1.0, 0.0),
+    );
     let file = get_output_file()?;
     let mut writer = BufWriter::new(file);
     cam.render(&mut writer, &world)?;
