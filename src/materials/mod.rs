@@ -1,12 +1,12 @@
 pub mod lambertian;
 
-use crate::objects::HitRecord;
+use crate::objects::Hit;
 use crate::prelude::*;
 
 pub use lambertian::Lambertian;
 
 pub trait Material {
-    fn scatter(&self, ray_in: &Ray, rec: &HitRecord) -> Option<Scatter>;
+    fn scatter(&self, ray_in: &Ray, hit: &Hit) -> Option<Scatter>;
 }
 
 pub struct Scatter {

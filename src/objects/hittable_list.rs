@@ -1,4 +1,4 @@
-use super::{HitRecord, Hittable};
+use super::{Hit, Hittable};
 use crate::prelude::*;
 
 pub struct HittableList {
@@ -24,17 +24,17 @@ impl HittableList {
 }
 
 impl Hittable for HittableList {
-    fn hit(&self, ray: &Ray, t_range: Interval) -> Option<HitRecord> {
-        let mut has_hit = None;
+    fn hit(&self, ray: &Ray, t_range: Interval) -> Option<Hit> {
+        let mut closest_hit = None;
         let mut closest_so_far = t_range.max;
 
         for object in &self.objects {
-            if let Some(rec) = object.hit(ray, Interval::new(t_range.min, closest_so_far)) {
-                closest_so_far = rec.t;
-                has_hit = Some(rec);
+            if let Some(hit) = object.hit(ray, Interval::new(t_range.min, closest_so_far)) {
+                closest_so_far = hit.t;
+                closest_hit = Some(hit);
             }
         }
 
-        has_hit
+        closest_hit
     }
 }

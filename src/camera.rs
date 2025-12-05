@@ -1,4 +1,4 @@
-use crate::objects::{HitRecord, Hittable};
+use crate::objects::{Hit, Hittable};
 use crate::prelude::*;
 
 pub struct Camera {
@@ -101,8 +101,8 @@ fn ray_color(ray: &Ray, depth: i32, world: &dyn Hittable) -> Color {
         return Color::new(0.0, 0.0, 0.0);
     }
 
-    if let Some(rec) = world.hit(ray, Interval::new(0.001, INFINITY)) {
-        return if let Some(scatter) = rec.mat.scatter(ray, &rec) {
+    if let Some(hit) = world.hit(ray, Interval::new(0.001, INFINITY)) {
+        return if let Some(scatter) = hit.mat.scatter(ray, &hit) {
             scatter.attenuation * ray_color(&scatter.ray_out, depth - 1, world)
         } else {
             Color::new(0.0, 0.0, 0.0)

@@ -1,4 +1,4 @@
-use super::{HitRecord, Material, Scatter};
+use super::{Hit, Material, Scatter};
 use crate::prelude::*;
 
 pub struct Lambertian {
@@ -12,10 +12,10 @@ impl Lambertian {
 }
 
 impl Material for Lambertian {
-    fn scatter(&self, _: &Ray, rec: &HitRecord) -> Option<Scatter> {
-        let scatter_direction = rec.normal + Vec3::random_unit_vector();
+    fn scatter(&self, _: &Ray, hit: &Hit) -> Option<Scatter> {
+        let scatter_direction = hit.normal + Vec3::random_unit_vector();
         Some(Scatter {
-            ray_out: Ray::new(rec.point, scatter_direction),
+            ray_out: Ray::new(hit.point, scatter_direction),
             attenuation: self.albedo,
         })
     }

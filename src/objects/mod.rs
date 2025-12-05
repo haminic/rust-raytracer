@@ -3,7 +3,7 @@ pub mod sphere;
 
 use crate::{materials::Material, prelude::*};
 
-pub struct HitRecord {
+pub struct Hit {
     pub point: Point3,
     pub normal: Vec3,
     pub mat: Rc<dyn Material>,
@@ -11,7 +11,7 @@ pub struct HitRecord {
     pub front_face: bool,
 }
 
-impl HitRecord {
+impl Hit {
     pub fn new(
         ray: &Ray,
         point: Point3,
@@ -36,5 +36,5 @@ impl HitRecord {
 }
 
 pub trait Hittable {
-    fn hit(&self, ray: &Ray, t_range: Interval) -> Option<HitRecord>;
+    fn hit(&self, ray: &Ray, t_range: Interval) -> Option<Hit>;
 }

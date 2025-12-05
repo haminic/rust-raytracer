@@ -1,4 +1,4 @@
-use super::{HitRecord, Hittable, Material};
+use super::{Hit, Hittable, Material};
 use crate::prelude::*;
 
 pub struct Sphere {
@@ -18,7 +18,7 @@ impl Sphere {
 }
 
 impl Hittable for Sphere {
-    fn hit(&self, ray: &Ray, t_range: Interval) -> Option<HitRecord> {
+    fn hit(&self, ray: &Ray, t_range: Interval) -> Option<Hit> {
         let oc = self.center - ray.origin;
         let a = ray.direction.length_squared();
         // let b = -2.0 * ray.direction.dot(oc);
@@ -43,7 +43,7 @@ impl Hittable for Sphere {
 
         let point = ray.at(root);
         let outward_normal = (point - self.center) / self.radius;
-        let rec = HitRecord::new(&ray, point, outward_normal, self.mat.clone(), root);
-        Some(rec)
+        let hit = Hit::new(&ray, point, outward_normal, self.mat.clone(), root);
+        Some(hit)
     }
 }
