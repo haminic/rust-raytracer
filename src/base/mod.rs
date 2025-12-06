@@ -1,7 +1,7 @@
-pub mod color;
-pub mod interval;
-pub mod ray;
-pub mod vec3;
+mod color;
+mod interval;
+mod ray;
+mod vec3;
 
 pub use color::{Color, write_color};
 pub use interval::Interval;

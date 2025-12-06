@@ -8,8 +8,8 @@ use std::fs;
 
 use crate::camera::{Camera, Renderer, Resolution};
 use crate::materials::{Dielectric, Lambertian, Material};
-use crate::objects::hittable_list::HittableList;
-use crate::objects::sphere::Sphere;
+use crate::objects::HittableList;
+use crate::objects::Sphere;
 use crate::prelude::*;
 
 fn main() -> std::io::Result<()> {
