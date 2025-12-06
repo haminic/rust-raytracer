@@ -1,6 +1,7 @@
 use super::{Aabb, Hit, Hittable};
 use crate::prelude::*;
 
+// world vector object
 pub struct HittableList {
     bbox: Aabb,
     pub objects: Vec<Box<dyn Hittable>>,

@@ -1,6 +1,6 @@
 use crate::objects::Hittable;
 use crate::prelude::*;
-use indicatif::{ParallelProgressIterator, ProgressBar, ProgressStyle};
+use indicatif::{ProgressBar, ProgressStyle};
 use rayon::prelude::*;
 
 #[derive(Clone, Copy)]
@@ -198,17 +198,3 @@ fn ray_color(ray: &Ray, depth: i32, world: &dyn Hittable) -> Color {
     }
 }
 
-fn show_progress(progress: f64) {
-    let bar_width = 25;
-    let filled = (progress * bar_width as f64) as usize;
-
-    let bar = format!(
-        "[{}{}] {:3}%",
-        "#".repeat(filled),
-        "-".repeat(bar_width - filled),
-        (progress * 100.0) as i32
-    );
-
-    print!("\r{}", bar);
-    stdout().flush().unwrap();
-}
