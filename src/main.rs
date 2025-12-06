@@ -13,6 +13,9 @@ use crate::objects::HittableList;
 use crate::objects::Sphere;
 use crate::prelude::*;
 
+static SAMPLES_PER_PIXEL: i32 = 10;
+static MAX_DEPTH: i32 = 10;
+
 fn main() -> std::io::Result<()> {
     let start_time = Instant::now();
 
@@ -82,7 +85,7 @@ fn main() -> std::io::Result<()> {
         10.0,
         0.6,
     );
-    let renderer = Renderer::new(10, 25);
+    let renderer = Renderer::new(SAMPLES_PER_PIXEL, MAX_DEPTH);
     let file = get_output_file()?;
     renderer.render(&cam, &world, file)?;
 
