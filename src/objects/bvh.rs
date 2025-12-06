@@ -26,8 +26,8 @@ impl Bvh {
             2 => {
                 let bbox = Aabb::enclosing(objects[0].bounding_box(), objects[1].bounding_box());
                 Self::Node {
-                    left: Box::new(Self::Leaf(objects.pop().unwrap())),
                     right: Box::new(Self::Leaf(objects.pop().unwrap())),
+                    left: Box::new(Self::Leaf(objects.pop().unwrap())),
                     bbox,
                 }
             }

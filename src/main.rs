@@ -13,13 +13,11 @@ use crate::objects::Sphere;
 use crate::objects::{Bvh, HittableList};
 use crate::prelude::*;
 
-static SAMPLES_PER_PIXEL: i32 = 25;
+static SAMPLES_PER_PIXEL: i32 = 5;
 static MAX_DEPTH: i32 = 10;
 static N_BALLS: i32 = 5;
 
 fn main() -> std::io::Result<()> {
-    let start_time = Instant::now();
-
     let mut world = HittableList::new();
 
     let ground_material: Arc<dyn Material> = Arc::new(Lambertian::new(Color::new(0.5, 0.5, 0.5)));
@@ -71,6 +69,7 @@ fn main() -> std::io::Result<()> {
     world.add(Sphere::new(Point3::new(-4.0, 1.0, 0.0), 1.0, material3));
 
     let world = Bvh::from_list(world);
+    let start_time = Instant::now();
 
     let resolution = Resolution::with_aspect_ratio(16.0 / 9.0, 1200);
     let cam = Camera::new(
