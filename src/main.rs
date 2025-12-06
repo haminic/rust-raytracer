@@ -13,8 +13,9 @@ use crate::objects::HittableList;
 use crate::objects::Sphere;
 use crate::prelude::*;
 
-static SAMPLES_PER_PIXEL: i32 = 10;
+static SAMPLES_PER_PIXEL: i32 = 25;
 static MAX_DEPTH: i32 = 10;
+static N_BALLS: i32 = 5;
 
 fn main() -> std::io::Result<()> {
     let start_time = Instant::now();
@@ -28,8 +29,8 @@ fn main() -> std::io::Result<()> {
         ground_material,
     ));
 
-    for a in -11..11 {
-        for b in -11..11 {
+    for a in -N_BALLS..N_BALLS {
+        for b in -N_BALLS..N_BALLS {
             let choose_mat = random_f64();
             let choose_bounce = random_f64();
             let center1 = Point3::new(
@@ -66,15 +67,13 @@ fn main() -> std::io::Result<()> {
     let material2 = Arc::new(Lambertian::new(Color::new(0.4, 0.2, 0.1)));
     world.add(Sphere::new(Point3::new(4.0, 1.0, 0.0), 1.0, material2));
 
-    let silver_albedo = Color::new(252.0, 250.0, 245.0) / 256.0;
-    let gold_albedo = Color::new(255.0, 226.0, 155.0) / 256.0;
-    let material3 = Arc::new(Metal::new(gold_albedo));
+    let material3 = Arc::new(Metal::new(Metal::GOLD_ALBEDO));
     world.add(Sphere::new(Point3::new(-4.0, 1.0, 0.0), 1.0, material3));
 
     let resolution = Resolution::with_aspect_ratio(16.0 / 9.0, 1200);
     let cam = Camera::new(
         resolution,
-        Point3::new(13.0, 2.0, 6.0),
+        Point3::new(8.0, 2.0, 6.0),
         Point3::new(0.0, 0.0, 0.0),
         Vec3::new(0.0, 1.0, 0.0),
         20.0,

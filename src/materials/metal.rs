@@ -6,6 +6,10 @@ pub struct Metal {
 }
 
 impl Metal {
+    pub const SILVER_ALBEDO: Color = Color::new(252.0/256.0, 250.0/256.0, 245.0/256.0);
+    pub const GOLD_ALBEDO: Color = Color::new(255.0/256.0, 226.0/256.0, 155.0/256.0);
+    pub const CHROME_ALBEDO: Color = Color::new(196.0/255.0, 197.0/255.0, 197.0/255.0);
+
     pub const fn new(albedo: Color) -> Self {
         Self { albedo }
     }
