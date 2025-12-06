@@ -169,17 +169,24 @@ fn ray_color(ray: &Ray, depth: i32, world: &dyn Hittable) -> Color {
         return Color::new(0.0, 0.0, 0.0);
     }
 
+    //TODO: the return logic is very suspicious and I dont know how to fix it yet. I will come back later
     if let Some(hit) = world.hit(ray, Interval::new(0.001, INFINITY)) {
-        return if let Some(scatter) = hit.mat.scatter(ray, &hit) {
+        // hit something
+        if let Some(scatter) = hit.mat.scatter(ray, &hit) {
+            //hit and scatter
             scatter.attenuation * ray_color(&scatter.ray_out, depth - 1, world)
         } else {
+            //hit but absorb
             Color::new(0.0, 0.0, 0.0)
-        };
+        }
+    } else {
+        // not hit anything
+        let unit_direction = ray.direction.unit_vector();
+        let a = 0.5 * (unit_direction.y + 1.0);
+        // return sky_gradient
+        (1.0 - a) * Color::new(1.0, 1.0, 1.0) + a * Color::new(0.5, 0.7, 1.0)
     }
-
-    let unit_direction = ray.direction.unit_vector();
-    let a = 0.5 * (unit_direction.y + 1.0);
-    (1.0 - a) * Color::new(1.0, 1.0, 1.0) + a * Color::new(0.5, 0.7, 1.0)
+    
 }
 
 fn show_progress(progress: f64) {
