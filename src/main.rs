@@ -65,7 +65,7 @@ fn main() -> std::io::Result<()> {
     world.add(Sphere::new(Point3::new(0.0, 1.0, 0.0), 1.0, material1));
 
     let material2 = Arc::new(Lambertian::new(Color::new(0.4, 0.2, 0.1)));
-    world.add(Sphere::new(Point3::new(4.0, 1.0, 0.0), 1.0, material2));
+    world.add(Sphere::new(Point3::new(2.0, 1.0, -2.5), 1.0, material2));
 
     let material3 = Arc::new(Metal::new(Metal::GOLD_ALBEDO));
     world.add(Sphere::new(Point3::new(-4.0, 1.0, 0.0), 1.0, material3));
@@ -73,7 +73,7 @@ fn main() -> std::io::Result<()> {
     let resolution = Resolution::with_aspect_ratio(16.0 / 9.0, 1200);
     let cam = Camera::new(
         resolution,
-        Point3::new(8.0, 2.0, 6.0),
+        Point3::new(10.0, 2.0, 4.0),
         Point3::new(0.0, 0.0, 0.0),
         Vec3::new(0.0, 1.0, 0.0),
         20.0,
