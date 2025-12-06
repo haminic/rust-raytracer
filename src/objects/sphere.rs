@@ -1,10 +1,11 @@
 use super::{Hit, Hittable, Material};
-use crate::prelude::*;
+use crate::{objects::Aabb, prelude::*};
 
 pub struct Sphere {
     center: Ray,
     radius: f64,
     mat: Arc<dyn Material>,
+    bbox: Aabb,
 }
 
 impl Sphere {
@@ -13,6 +14,11 @@ impl Sphere {
             center: Ray::new(center, Vec3::new(0.0, 0.0, 0.0)),
             radius: radius.max(0.0),
             mat,
+            bbox: Aabb::new(
+                Interval::centered_at(center.x, radius),
+                Interval::centered_at(center.y, radius),
+                Interval::centered_at(center.z, radius),
+            ),
         }
     }
 
@@ -22,17 +28,27 @@ impl Sphere {
         radius: f64,
         mat: Arc<dyn Material>,
     ) -> Self {
+        let initial_bbox = Aabb::new(
+            Interval::centered_at(center1.x, radius),
+            Interval::centered_at(center1.y, radius),
+            Interval::centered_at(center1.z, radius),
+        );
+        let final_bbox = Aabb::new(
+            Interval::centered_at(center2.x, radius),
+            Interval::centered_at(center2.y, radius),
+            Interval::centered_at(center2.z, radius),
+        );
         Self {
             center: Ray::new(center1, center2 - center1),
             radius,
             mat,
+            bbox: Aabb::enclosing(initial_bbox, final_bbox),
         }
     }
 }
 
 impl Hittable for Sphere {
     fn hit(&self, ray: &Ray, t_range: Interval) -> Option<Hit> {
-
         /*
             ray(t) = Q+t*d ; d = direction of r
             (C-(Q+t*d))(C-(Q+t*d)) = r^2 -> find solution t
@@ -43,7 +59,6 @@ impl Hittable for Sphere {
 
         */
 
-        //TODO: fix the temporary fix of moving center of sphere at time t
         let current_center = self.center.at(ray.time);
 
         let oc = current_center - ray.origin;
@@ -70,5 +85,9 @@ impl Hittable for Sphere {
         let outward_normal = (point - current_center) / self.radius;
         let hit = Hit::new(&ray, point, outward_normal, self.mat.clone(), root);
         Some(hit)
+    }
+
+    fn bounding_box(&self) -> Aabb {
+        self.bbox
     }
 }

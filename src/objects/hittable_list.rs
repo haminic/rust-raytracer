@@ -1,7 +1,8 @@
-use super::{Hit, Hittable};
+use super::{Aabb, Hit, Hittable};
 use crate::prelude::*;
 
 pub struct HittableList {
+    bbox: Aabb,
     pub objects: Vec<Arc<dyn Hittable>>,
 }
 
@@ -9,6 +10,7 @@ impl HittableList {
     pub fn new() -> Self {
         HittableList {
             objects: Vec::new(),
+            bbox: Aabb::EMPTY,
         }
     }
 
@@ -19,6 +21,7 @@ impl HittableList {
     }
 
     pub fn add(&mut self, object: Arc<dyn Hittable>) {
+        self.bbox = Aabb::enclosing(self.bbox, object.bounding_box());
         self.objects.push(object);
     }
 }
@@ -36,5 +39,9 @@ impl Hittable for HittableList {
         }
 
         closest_hit
+    }
+
+    fn bounding_box(&self) -> Aabb {
+        self.bbox
     }
 }

@@ -1,12 +1,13 @@
+mod aabb;
 mod hittable_list;
 mod sphere;
 
+pub use aabb::Aabb;
 pub use hittable_list::HittableList;
 pub use sphere::Sphere;
 
 use crate::{materials::Material, prelude::*};
 use std::sync::Arc;
-
 
 // struct Hit is for collecting Hit Record
 pub struct Hit {
@@ -46,4 +47,5 @@ impl Hit {
 
 pub trait Hittable: Send + Sync {
     fn hit(&self, ray: &Ray, t_range: Interval) -> Option<Hit>;
+    fn bounding_box(&self) -> Aabb;
 }

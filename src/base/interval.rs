@@ -14,6 +14,19 @@ impl Interval {
         Interval { min, max }
     }
 
+    pub fn expand(&self, delta: f64) -> Self {
+        let padding = delta / 2.0;
+        Self::new(self.min - padding, self.max + padding)
+    }
+
+    pub fn enclosing(a: Self, b: Self) -> Self {
+        Self::new(a.min.min(b.min), a.max.max(b.max))
+    }
+
+    pub fn centered_at(center: f64, radius: f64) -> Self {
+        Self::new(center - radius, center + radius)
+    }
+
     pub fn size(&self) -> f64 {
         self.max - self.min
     }

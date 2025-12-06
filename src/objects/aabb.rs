@@ -1,0 +1,65 @@
+use crate::prelude::*;
+
+#[derive(Clone, Copy)]
+pub struct Aabb {
+    pub x: Interval,
+    pub y: Interval,
+    pub z: Interval,
+}
+
+impl Aabb {
+    pub const EMPTY: Self = Self::new(Interval::EMPTY, Interval::EMPTY, Interval::EMPTY);
+
+    pub const fn new(x: Interval, y: Interval, z: Interval) -> Self {
+        Self { x, y, z }
+    }
+
+    pub fn from_corners(a: Point3, b: Point3) -> Self {
+        let x = Interval::new(a.x.min(b.x), a.x.max(b.x));
+        let y = Interval::new(a.y.min(b.y), a.y.max(b.y));
+        let z = Interval::new(a.z.min(b.z), a.z.max(b.z));
+        Self { x, y, z }
+    }
+
+    pub fn enclosing(a: Self, b: Self) -> Self {
+        Self::new(
+            Interval::enclosing(a.x, b.x),
+            Interval::enclosing(a.y, b.y),
+            Interval::enclosing(a.z, b.z),
+        )
+    }
+
+    pub fn axis(&self, axis: Axis) -> Interval {
+        match axis {
+            Axis::X => self.x,
+            Axis::Y => self.y,
+            Axis::Z => self.z,
+        }
+    }
+
+    pub fn hit(&self, ray: &Ray, t_range: Interval) -> bool {
+        let mut lower_bound = t_range.min;
+        let mut upper_bound = t_range.max;
+
+        for axis in Axis::AXES {
+            let interval = self.axis(axis);
+            let adinv = 1.0 / ray.direction.axis(axis);
+
+            let t0 = (interval.min - ray.origin.axis(axis)) * adinv;
+            let t1 = (interval.max - ray.origin.axis(axis)) * adinv;
+
+            if t0 < t1 {
+                lower_bound = lower_bound.max(t0);
+                upper_bound = upper_bound.min(t1);
+            } else {
+                lower_bound = lower_bound.max(t1);
+                upper_bound = upper_bound.min(t0);
+            }
+
+            if upper_bound <= lower_bound {
+                return false;
+            }
+        }
+        true
+    }
+}

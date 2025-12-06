@@ -1,8 +1,10 @@
+mod axis;
 mod color;
 mod interval;
 mod ray;
 mod vec3;
 
+pub use axis::Axis;
 pub use color::{Color, write_color};
 pub use interval::Interval;
 pub use ray::Ray;
