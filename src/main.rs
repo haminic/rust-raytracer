@@ -44,12 +44,14 @@ fn main() -> std::io::Result<()> {
     let resolution = Resolution::with_aspect_ratio(16.0 / 9.0, 400);
     let cam = Camera::new(
         resolution,
-        90.0,
         Point3::new(-2.0, 2.0, 1.0),
         Point3::new(0.0, 0.0, -1.0),
         Vec3::new(0.0, 1.0, 0.0),
+        20.0,
+        3.4,
+        10.0,
     );
-    let renderer = Renderer::new(100, 50);
+    let renderer = Renderer::new(25, 25);
     let file = get_output_file()?;
     renderer.render(&cam, &world, file)?;
 
