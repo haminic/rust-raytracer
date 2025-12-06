@@ -8,7 +8,7 @@ use std::fs;
 use std::time::Instant;
 
 use crate::camera::{Camera, Renderer, Resolution};
-use crate::materials::{Dielectric, Lambertian, Material};
+use crate::materials::{Dielectric, Lambertian, Metal, Material};
 use crate::objects::HittableList;
 use crate::objects::Sphere;
 use crate::prelude::*;
@@ -41,9 +41,13 @@ fn main() -> std::io::Result<()> {
 
             if (center1 - Point3::new(4.0, 0.2, 0.0)).length() > 0.9 {
                 let sphere_material: Arc<dyn Material> = match choose_mat {
-                    x if x < 0.8 => {
+                    x if x < 0.5 => {
                         let albedo = Color::random(0.0..1.0) * Color::random(0.0..1.0);
                         Arc::new(Lambertian::new(albedo))
+                    }
+                    x if x < 0.8 => {
+                        let albedo = Color::random(0.0..1.0) * Color::random(0.0..1.0);
+                        Arc::new(Metal::new(albedo))
                     }
                     _ => Arc::new(Dielectric::new(1.5)),
                 };
@@ -62,10 +66,15 @@ fn main() -> std::io::Result<()> {
     let material2 = Arc::new(Lambertian::new(Color::new(0.4, 0.2, 0.1)));
     world.add(Sphere::new(Point3::new(4.0, 1.0, 0.0), 1.0, material2));
 
+    let silver_albedo = Color::new(252.0, 250.0, 245.0) / 256.0;
+    let gold_albedo = Color::new(255.0, 226.0, 155.0) / 256.0;
+    let material3 = Arc::new(Metal::new(gold_albedo));
+    world.add(Sphere::new(Point3::new(-4.0, 1.0, 0.0), 1.0, material3));
+
     let resolution = Resolution::with_aspect_ratio(16.0 / 9.0, 1200);
     let cam = Camera::new(
         resolution,
-        Point3::new(13.0, 2.0, 3.0),
+        Point3::new(13.0, 2.0, 6.0),
         Point3::new(0.0, 0.0, 0.0),
         Vec3::new(0.0, 1.0, 0.0),
         20.0,
