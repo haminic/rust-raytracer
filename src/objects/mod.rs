@@ -7,6 +7,8 @@ pub use sphere::Sphere;
 use crate::{materials::Material, prelude::*};
 use std::sync::Arc;
 
+
+// struct Hit is for collecting Hit Record
 pub struct Hit {
     pub point: Point3,
     pub normal: Vec3,
@@ -25,10 +27,13 @@ impl Hit {
     ) -> Self {
         let front_face = ray.direction.dot(outward_normal) < 0.0;
         let normal = if front_face {
+            // ray is outside the sphere
             outward_normal
         } else {
+            // ray is inside the sphere
             -outward_normal
         };
+
         Self {
             point,
             normal,

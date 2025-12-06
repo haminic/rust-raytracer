@@ -32,14 +32,25 @@ impl Sphere {
 
 impl Hittable for Sphere {
     fn hit(&self, ray: &Ray, t_range: Interval) -> Option<Hit> {
+
+        /*
+            ray(t) = Q+t*d ; d = direction of r
+            (C-(Q+t*d))(C-(Q+t*d)) = r^2 -> find solution t
+            [d*d] t^2 - [2d.dot(C-Q)] * t + [(C-Q)(C-Q) - r^2] = 0
+
+            use h = -b/2 = d.dot(C-Q)
+            solution root = ( h +- sqrt( h*h - a*c ) ) / a
+
+        */
+
+        //TODO: fix the temporary fix of moving center of sphere at time t
         let current_center = self.center.at(ray.time);
+
         let oc = current_center - ray.origin;
         let a = ray.direction.length_squared();
-        // let b = -2.0 * ray.direction.dot(oc);
         let h = ray.direction.dot(oc);
         let c = oc.length_squared() - self.radius * self.radius;
 
-        // let discriminant = b * b - 4.0 * a * c;
         let discriminant = h * h - a * c;
         if discriminant < 0.0 {
             return None;
