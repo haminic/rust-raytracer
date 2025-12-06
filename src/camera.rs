@@ -170,16 +170,20 @@ fn ray_color(ray: &Ray, depth: i32, world: &dyn Hittable) -> Color {
     }
 
     if let Some(hit) = world.hit(ray, Interval::new(0.001, INFINITY)) {
-        return if let Some(scatter) = hit.mat.scatter(ray, &hit) {
+        // if hit something
+        let color: Color = if let Some(scatter) = hit.mat.scatter(ray, &hit) {
             scatter.attenuation * ray_color(&scatter.ray_out, depth - 1, world)
         } else {
             Color::new(0.0, 0.0, 0.0)
         };
+        color
+    } else {
+        // does not hit
+        let unit_direction = ray.direction.unit_vector();
+        let a = 0.5 * (unit_direction.y + 1.0);
+        (1.0 - a) * Color::new(1.0, 1.0, 1.0) + a * Color::new(0.5, 0.7, 1.0)
     }
 
-    let unit_direction = ray.direction.unit_vector();
-    let a = 0.5 * (unit_direction.y + 1.0);
-    (1.0 - a) * Color::new(1.0, 1.0, 1.0) + a * Color::new(0.5, 0.7, 1.0)
 }
 
 fn show_progress(progress: f64) {

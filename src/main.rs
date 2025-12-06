@@ -13,7 +13,8 @@ use crate::objects::HittableList;
 use crate::objects::Sphere;
 use crate::prelude::*;
 
-static SAMPLES_PER_PIXEL: i32 = 10;
+// HAM use 10, 25
+static SAMPLES_PER_PIXEL: i32 = 5;
 static MAX_DEPTH: i32 = 10;
 
 fn main() -> std::io::Result<()> {
