@@ -1,5 +1,6 @@
 use crate::objects::Hittable;
 use crate::prelude::*;
+use indicatif::ParallelProgressIterator;
 use rayon::prelude::*;
 
 #[derive(Clone, Copy)]
@@ -124,7 +125,7 @@ impl Renderer {
         )?;
         writeln!(writer, "255")?;
 
-        let pixel_colors: Vec<Color> = (0..camera.resolution.height).into_par_iter().flat_map(|j| {
+        let pixel_colors: Vec<Color> = (0..camera.resolution.height).into_par_iter().progress().flat_map(|j| {
             // let progress = j as f64 / (camera.resolution.height - 1) as f64;
             // show_progress(progress);
             (0..camera.resolution.width).into_par_iter().map(move |i| {
