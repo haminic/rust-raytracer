@@ -1,14 +1,15 @@
 use super::{Hit, Hittable, Material};
 use crate::prelude::*;
+use std::sync::Arc;
 
 pub struct Sphere {
     center: Ray,
     radius: f64,
-    mat: Rc<dyn Material>,
+    mat: Arc<dyn Material>,
 }
 
 impl Sphere {
-    pub fn new(center: Point3, radius: f64, mat: Rc<dyn Material>) -> Self {
+    pub fn new(center: Point3, radius: f64, mat: Arc<dyn Material>) -> Self {
         Self {
             center: Ray::new(center, Vec3::new(0.0, 0.0, 0.0)),
             radius: radius.max(0.0),
@@ -20,7 +21,7 @@ impl Sphere {
         center1: Point3,
         center2: Point3,
         radius: f64,
-        mat: Rc<dyn Material>,
+        mat: Arc<dyn Material>,
     ) -> Self {
         Self {
             center: Ray::new(center1, center2 - center1),

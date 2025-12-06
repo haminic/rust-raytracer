@@ -1,5 +1,6 @@
 use crate::objects::Hittable;
 use crate::prelude::*;
+use rayon::prelude::*;
 
 #[derive(Clone, Copy)]
 pub struct Resolution {
@@ -123,19 +124,28 @@ impl Renderer {
         )?;
         writeln!(writer, "255")?;
 
-        for j in 0..camera.resolution.height {
-            let progress = j as f64 / (camera.resolution.height - 1) as f64;
-            show_progress(progress);
-            for i in 0..camera.resolution.width {
+        let pixel_colors: Vec<Color> = (0..camera.resolution.height).into_par_iter().flat_map(|j| {
+            // let progress = j as f64 / (camera.resolution.height - 1) as f64;
+            // show_progress(progress);
+            (0..camera.resolution.width).into_par_iter().map(move |i| {
                 // println!("pixel ({}, {})", i, j);
                 let mut pixel_color = Color::new(0.0, 0.0, 0.0);
                 for _ in 0..self.samples_per_pixel {
                     let ray = camera.sample_ray(i, j);
                     pixel_color += ray_color(&ray, self.max_depth, world)
                 }
-                write_color(&mut writer, self.pixel_samples_scale * pixel_color)?;
-            }
+
+                // Return the pixel color
+                self.pixel_samples_scale * pixel_color
+            })
+        })
+        .collect();
+        
+
+        for pixel_color in pixel_colors {
+            write_color(&mut writer, pixel_color)?;
         }
+
         println!("\nDone!");
         Ok(())
     }

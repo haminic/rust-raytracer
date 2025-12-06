@@ -12,14 +12,15 @@ use crate::materials::{Dielectric, Lambertian, Material};
 use crate::objects::HittableList;
 use crate::objects::Sphere;
 use crate::prelude::*;
+use std::sync::Arc;
 
 fn main() -> std::io::Result<()> {
     let start_time = Instant::now();
 
     let mut world = HittableList::new();
 
-    let ground_material: Rc<dyn Material> = Rc::new(Lambertian::new(Color::new(0.5, 0.5, 0.5)));
-    world.add(Rc::new(Sphere::new(
+    let ground_material: Arc<dyn Material> = Arc::new(Lambertian::new(Color::new(0.5, 0.5, 0.5)));
+    world.add(Arc::new(Sphere::new(
         Point3::new(0.0, -1000.0, 0.0),
         1000.0,
         ground_material,
@@ -37,17 +38,17 @@ fn main() -> std::io::Result<()> {
             let center2 = center1 + Vec3::new(0.0, random_range(0.0..0.5), 0.0);
 
             if (center1 - Point3::new(4.0, 0.2, 0.0)).length() > 0.9 {
-                let sphere_material: Rc<dyn Material> = match choose_mat {
+                let sphere_material: Arc<dyn Material> = match choose_mat {
                     x if x < 0.8 => {
                         let albedo = Color::random(0.0..1.0) * Color::random(0.0..1.0);
-                        Rc::new(Lambertian::new(albedo))
+                        Arc::new(Lambertian::new(albedo))
                     }
-                    _ => Rc::new(Dielectric::new(1.5)),
+                    _ => Arc::new(Dielectric::new(1.5)),
                 };
                 if choose_bounce > 0.5 {
-                    world.add(Rc::new(Sphere::new(center1, 0.2, sphere_material)));
+                    world.add(Arc::new(Sphere::new(center1, 0.2, sphere_material)));
                 } else {
-                    world.add(Rc::new(Sphere::new_moving(
+                    world.add(Arc::new(Sphere::new_moving(
                         center1,
                         center2,
                         0.2,
@@ -58,15 +59,15 @@ fn main() -> std::io::Result<()> {
         }
     }
 
-    let material1 = Rc::new(Dielectric::new(1.5));
-    world.add(Rc::new(Sphere::new(
+    let material1 = Arc::new(Dielectric::new(1.5));
+    world.add(Arc::new(Sphere::new(
         Point3::new(0.0, 1.0, 0.0),
         1.0,
         material1,
     )));
 
-    let material2 = Rc::new(Lambertian::new(Color::new(0.4, 0.2, 0.1)));
-    world.add(Rc::new(Sphere::new(
+    let material2 = Arc::new(Lambertian::new(Color::new(0.4, 0.2, 0.1)));
+    world.add(Arc::new(Sphere::new(
         Point3::new(4.0, 1.0, 0.0),
         1.0,
         material2,
