@@ -8,9 +8,9 @@ use std::fs;
 use std::time::Instant;
 
 use crate::camera::{Camera, Renderer, Resolution};
-use crate::materials::{Dielectric, Lambertian, Metal, Material};
-use crate::objects::HittableList;
+use crate::materials::{Dielectric, Lambertian, Material, Metal};
 use crate::objects::Sphere;
+use crate::objects::{Bvh, HittableList};
 use crate::prelude::*;
 
 static SAMPLES_PER_PIXEL: i32 = 25;
@@ -69,6 +69,8 @@ fn main() -> std::io::Result<()> {
 
     let material3 = Arc::new(Metal::new(Metal::GOLD_ALBEDO));
     world.add(Sphere::new(Point3::new(-4.0, 1.0, 0.0), 1.0, material3));
+
+    let world = Bvh::from_list(world);
 
     let resolution = Resolution::with_aspect_ratio(16.0 / 9.0, 1200);
     let cam = Camera::new(
