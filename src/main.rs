@@ -56,24 +56,8 @@ fn main() -> std::io::Result<()> {
     renderer.render(&cam, &world, file)?;
 
     // TODO: Show time elapsed.
-    println!("Done.");
 
     Ok(())
-}
-
-fn show_progress(progress: f64) {
-    let bar_width = 25;
-    let filled = (progress * bar_width as f64) as usize;
-
-    let bar = format!(
-        "[{}{}] {:3}%",
-        "=".repeat(filled),
-        " ".repeat(bar_width - filled),
-        (progress * 100.0) as i32
-    );
-
-    print!("\r{}", bar);
-    stdout().flush().unwrap();
 }
 
 fn get_output_file() -> std::io::Result<File> {

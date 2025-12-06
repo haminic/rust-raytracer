@@ -119,9 +119,8 @@ impl Renderer {
         writeln!(writer, "255")?;
 
         for j in 0..camera.resolution.height {
-            // TODO: Show progress bar
-            // let progress = j as f64 / (self.image_height - 1) as f64;
-            // show_progress(progress);
+            let progress = j as f64 / (camera.resolution.height - 1) as f64;
+            show_progress(progress);
             for i in 0..camera.resolution.width {
                 // println!("pixel ({}, {})", i, j);
                 let mut pixel_color = Color::new(0.0, 0.0, 0.0);
@@ -132,7 +131,7 @@ impl Renderer {
                 write_color(&mut writer, self.pixel_samples_scale * pixel_color)?;
             }
         }
-        // println!("\nDone!");
+        println!("\nDone!");
         Ok(())
     }
 }
@@ -165,4 +164,19 @@ fn ray_color(ray: &Ray, depth: i32, world: &dyn Hittable) -> Color {
     let unit_direction = ray.direction.unit_vector();
     let a = 0.5 * (unit_direction.y + 1.0);
     (1.0 - a) * Color::new(1.0, 1.0, 1.0) + a * Color::new(0.5, 0.7, 1.0)
+}
+
+fn show_progress(progress: f64) {
+    let bar_width = 25;
+    let filled = (progress * bar_width as f64) as usize;
+
+    let bar = format!(
+        "[{}{}] {:3}%",
+        "#".repeat(filled),
+        "-".repeat(bar_width - filled),
+        (progress * 100.0) as i32
+    );
+
+    print!("\r{}", bar);
+    stdout().flush().unwrap();
 }
