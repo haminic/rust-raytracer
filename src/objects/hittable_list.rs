@@ -1,6 +1,5 @@
 use super::{Hit, Hittable};
 use crate::prelude::*;
-use std::sync::Arc;
 
 pub struct HittableList {
     pub objects: Vec<Arc<dyn Hittable>>,

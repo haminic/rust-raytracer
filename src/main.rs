@@ -12,7 +12,6 @@ use crate::materials::{Dielectric, Lambertian, Material};
 use crate::objects::HittableList;
 use crate::objects::Sphere;
 use crate::prelude::*;
-use std::sync::Arc;
 
 fn main() -> std::io::Result<()> {
     let start_time = Instant::now();

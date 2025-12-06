@@ -1,6 +1,5 @@
 use super::{Hit, Hittable, Material};
 use crate::prelude::*;
-use std::sync::Arc;
 
 pub struct Sphere {
     center: Ray,
