@@ -100,6 +100,7 @@ impl Sub for Vec3 {
     }
 }
 
+// Vec3 * Vec3 -> Vec3
 impl Mul for Vec3 {
     type Output = Vec3;
     fn mul(self, rhs: Self) -> Self::Output {
@@ -107,6 +108,7 @@ impl Mul for Vec3 {
     }
 }
 
+// Vec3 * f64 -> Vec3
 impl Mul<f64> for Vec3 {
     type Output = Vec3;
     fn mul(self, rhs: f64) -> Self::Output {
@@ -114,13 +116,15 @@ impl Mul<f64> for Vec3 {
     }
 }
 
+// f64 * Vec3 -> Vec3
 impl Mul<Vec3> for f64 {
     type Output = Vec3;
     fn mul(self, rhs: Vec3) -> Self::Output {
-        Vec3::new(rhs.x * self, rhs.y * self, rhs.z * self)
+        Vec3::new(self * rhs.x, self * rhs.y, self * rhs.z)
     }
 }
 
+// Vec3 / Vec3 -> Vec3
 impl Div for Vec3 {
     type Output = Vec3;
     fn div(self, rhs: Self) -> Self::Output {
@@ -128,6 +132,7 @@ impl Div for Vec3 {
     }
 }
 
+// Vec3 / f64 -> Vec3
 impl Div<f64> for Vec3 {
     type Output = Vec3;
     fn div(self, rhs: f64) -> Self::Output {
@@ -135,13 +140,15 @@ impl Div<f64> for Vec3 {
     }
 }
 
-impl Div<Vec3> for f64 {
-    type Output = Vec3;
-    fn div(self, rhs: Vec3) -> Self::Output {
-        Vec3::new(rhs.x / self, rhs.y / self, rhs.z / self)
-    }
-}
+// f64 / Vec3 -> Vec3 ??? Delete; it doesnt make sense
+// impl Div<Vec3> for f64 {
+//     type Output = Vec3;
+//     fn div(self, rhs: Vec3) -> Self::Output {
+//         Vec3::new(rhs.x / self, rhs.y / self, rhs.z / self)
+//     }
+// }
 
+// Vec3 += Vec3
 impl AddAssign for Vec3 {
     fn add_assign(&mut self, rhs: Self) {
         self.x += rhs.x;
@@ -150,6 +157,7 @@ impl AddAssign for Vec3 {
     }
 }
 
+// Vec3 -= Vec3
 impl SubAssign for Vec3 {
     fn sub_assign(&mut self, rhs: Self) {
         self.x -= rhs.x;
@@ -158,6 +166,7 @@ impl SubAssign for Vec3 {
     }
 }
 
+// Vec3 *= f64
 impl MulAssign<f64> for Vec3 {
     fn mul_assign(&mut self, rhs: f64) {
         self.x *= rhs;
@@ -166,6 +175,7 @@ impl MulAssign<f64> for Vec3 {
     }
 }
 
+// Vec3 /= f64
 impl DivAssign<f64> for Vec3 {
     fn div_assign(&mut self, rhs: f64) {
         self.x /= rhs;
@@ -174,6 +184,7 @@ impl DivAssign<f64> for Vec3 {
     }
 }
 
+// -Vec3
 impl Neg for Vec3 {
     type Output = Vec3;
     fn neg(self) -> Self::Output {
