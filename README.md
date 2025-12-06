@@ -1,6 +1,6 @@
 This project was part of 2110479 Computer Graphics (2025/1)
 
-Reference: [raytracing.github.io](raytracing.github.io)
+Reference: [raytracing.github.io](https://raytracing.github.io/)
 
 Author
 1. Haminic 
