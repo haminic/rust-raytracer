@@ -12,7 +12,7 @@ impl Lambertian {
 }
 
 impl Material for Lambertian {
-    fn scatter(&self, _: &Ray, hit: &Hit) -> Option<Scatter> {
+    fn scatter(&self, ray_in: &Ray, hit: &Hit) -> Option<Scatter> {
         let mut scatter_direction = hit.normal + Vec3::random_unit_vector();
 
         if scatter_direction.near_zero() {
@@ -20,7 +20,7 @@ impl Material for Lambertian {
         }
 
         Some(Scatter {
-            ray_out: Ray::new(hit.point, scatter_direction),
+            ray_out: Ray::with_time(hit.point, scatter_direction, ray_in.time),
             attenuation: self.albedo,
         })
     }

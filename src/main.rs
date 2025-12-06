@@ -14,8 +14,7 @@ use crate::objects::Sphere;
 use crate::prelude::*;
 
 fn main() -> std::io::Result<()> {
-
-    let start_time = Instant::now();    
+    let start_time = Instant::now();
 
     let mut world = HittableList::new();
 
@@ -29,13 +28,15 @@ fn main() -> std::io::Result<()> {
     for a in -11..11 {
         for b in -11..11 {
             let choose_mat = random_f64();
-            let center = Point3::new(
+            let choose_bounce = random_f64();
+            let center1 = Point3::new(
                 a as f64 + 0.9 * random_f64(),
                 0.2,
                 b as f64 + 0.9 * random_f64(),
             );
+            let center2 = center1 + Vec3::new(0.0, random_range(0.0..0.5), 0.0);
 
-            if (center - Point3::new(4.0, 0.2, 0.0)).length() > 0.9 {
+            if (center1 - Point3::new(4.0, 0.2, 0.0)).length() > 0.9 {
                 let sphere_material: Rc<dyn Material> = match choose_mat {
                     x if x < 0.8 => {
                         let albedo = Color::random(0.0..1.0) * Color::random(0.0..1.0);
@@ -43,7 +44,16 @@ fn main() -> std::io::Result<()> {
                     }
                     _ => Rc::new(Dielectric::new(1.5)),
                 };
-                world.add(Rc::new(Sphere::new(center, 0.2, sphere_material)));
+                if choose_bounce > 0.5 {
+                    world.add(Rc::new(Sphere::new(center1, 0.2, sphere_material)));
+                } else {
+                    world.add(Rc::new(Sphere::new_moving(
+                        center1,
+                        center2,
+                        0.2,
+                        sphere_material,
+                    )));
+                }
             }
         }
     }
@@ -77,7 +87,7 @@ fn main() -> std::io::Result<()> {
     renderer.render(&cam, &world, file)?;
 
     let elapsed = start_time.elapsed().as_millis();
-    println!("Render time = {}.{} s", elapsed/1000, elapsed%1000);
+    println!("Render time = {}.{} s", elapsed / 1000, elapsed % 1000);
 
     Ok(())
 }

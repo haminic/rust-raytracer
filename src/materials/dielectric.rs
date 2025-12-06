@@ -33,7 +33,7 @@ impl Material for Dielectric {
         };
 
         Some(Scatter {
-            ray_out: Ray::new(hit.point, direction),
+            ray_out: Ray::with_time(hit.point, direction, ray_in.time),
             attenuation,
         })
     }

@@ -3,11 +3,24 @@ use crate::prelude::*;
 pub struct Ray {
     pub origin: Point3,
     pub direction: Vec3,
+    pub time: f64,
 }
 
 impl Ray {
     pub fn new(origin: Point3, direction: Vec3) -> Self {
-        Ray { origin, direction }
+        Ray {
+            origin,
+            direction,
+            time: 0.0,
+        }
+    }
+
+    pub fn with_time(origin: Point3, direction: Vec3, time: f64) -> Self {
+        Ray {
+            origin,
+            direction,
+            time,
+        }
     }
 
     pub fn at(&self, t: f64) -> Point3 {
