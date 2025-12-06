@@ -1,6 +1,6 @@
 use crate::objects::Hittable;
 use crate::prelude::*;
-use indicatif::ParallelProgressIterator;
+use indicatif::{ParallelProgressIterator, ProgressBar, ProgressStyle};
 use rayon::prelude::*;
 
 #[derive(Clone, Copy)]
@@ -125,28 +125,38 @@ impl Renderer {
         )?;
         writeln!(writer, "255")?;
 
-        let pixel_colors: Vec<Color> = (0..camera.resolution.height).into_par_iter().progress().flat_map(|j| {
-            // let progress = j as f64 / (camera.resolution.height - 1) as f64;
-            // show_progress(progress);
-            (0..camera.resolution.width).into_par_iter().map(move |i| {
-                // println!("pixel ({}, {})", i, j);
-                let mut pixel_color = Color::new(0.0, 0.0, 0.0);
-                for _ in 0..self.samples_per_pixel {
-                    let ray = camera.sample_ray(i, j);
-                    pixel_color += ray_color(&ray, self.max_depth, world)
-                }
+        let pb = Arc::new(ProgressBar::new(
+            camera.resolution.width as u64 * camera.resolution.height as u64,
+        ));
+        pb.set_style(
+            ProgressStyle::with_template("[{elapsed_precise}] [{bar:40}] {percent:>3}%")
+                .unwrap()
+                .progress_chars("#>-"),
+        );
 
-                // Return the pixel color
-                self.pixel_samples_scale * pixel_color
+        let pixel_colors: Vec<Color> = (0..camera.resolution.height)
+            .into_par_iter()
+            .flat_map(|j| {
+                let pb = pb.clone();
+                (0..camera.resolution.width).into_par_iter().map(move |i| {
+                    let mut pixel_color = Color::new(0.0, 0.0, 0.0);
+                    for _ in 0..self.samples_per_pixel {
+                        let ray = camera.sample_ray(i, j);
+                        pixel_color += ray_color(&ray, self.max_depth, world)
+                    }
+
+                    // Return the pixel color
+                    pb.inc(1);
+                    self.pixel_samples_scale * pixel_color
+                })
             })
-        })
-        .collect();
-        
+            .collect();
 
         for pixel_color in pixel_colors {
             write_color(&mut writer, pixel_color)?;
         }
 
+        pb.finish();
         println!("\nDone!");
         Ok(())
     }
@@ -186,7 +196,6 @@ fn ray_color(ray: &Ray, depth: i32, world: &dyn Hittable) -> Color {
         // return sky_gradient
         (1.0 - a) * Color::new(1.0, 1.0, 1.0) + a * Color::new(0.5, 0.7, 1.0)
     }
-    
 }
 
 fn show_progress(progress: f64) {
