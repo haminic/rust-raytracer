@@ -3,6 +3,13 @@ use std::cmp::Ordering;
 use super::{Aabb, Hit, Hittable};
 use crate::{objects::HittableList, prelude::*};
 
+/*
+    Bounding Volume Hierarchy
+
+    Optimizing hit check
+    This is thereotically better that hittable_list
+*/
+
 pub enum Bvh {
     Node {
         left: Box<Bvh>,

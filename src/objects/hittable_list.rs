@@ -1,7 +1,11 @@
 use super::{Aabb, Hit, Hittable};
 use crate::prelude::*;
 
-// world vector object
+/*
+    Contain all objects in the world
+    Checking by iterate over everything : O(n)
+*/
+
 pub struct HittableList {
     bbox: Aabb,
     pub objects: Vec<Box<dyn Hittable>>,

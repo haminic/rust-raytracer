@@ -15,7 +15,7 @@ use crate::prelude::*;
 
 static SAMPLES_PER_PIXEL: i32 = 5;
 static MAX_DEPTH: i32 = 10;
-static N_BALLS: i32 = 5;
+static N_BALLS: i32 = 15;
 
 fn main() -> std::io::Result<()> {
     let mut world = HittableList::new();

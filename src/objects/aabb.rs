@@ -1,5 +1,10 @@
 use crate::prelude::*;
 
+/*
+    Axis-Aligned Bounding Box
+    Use for Bvh optimizing
+*/
+
 #[derive(Clone, Copy)]
 pub struct Aabb {
     pub x: Interval,
