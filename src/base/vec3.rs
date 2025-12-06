@@ -18,40 +18,7 @@ impl Vec3 {
         Self { x, y, z }
     }
 
-    pub fn random(range: impl SampleRange<f64> + Clone) -> Self {
-        Self::new(
-            random_range(range.clone()),
-            random_range(range.clone()),
-            random_range(range.clone()),
-        )
-    }
-
-    pub fn random_unit_vector() -> Self {
-        Self::new(
-            random_normal_f64(),
-            random_normal_f64(),
-            random_normal_f64(),
-        )
-        .unit_vector()
-    }
-
-    pub fn random_on_hemisphere(normal: Self) -> Self {
-        let on_unit_sphere = Self::random_unit_vector();
-        if on_unit_sphere.dot(normal) > 0.0 {
-            on_unit_sphere
-        } else {
-            -on_unit_sphere
-        }
-    }
-
-    pub fn axis(self, axis: Axis) -> f64 {
-        match axis {
-            Axis::X => self.x,
-            Axis::Y => self.y,
-            Axis::Z => self.z,
-        }
-    }
-
+    // --------------------- basic function ---------------------
     pub fn length_squared(self) -> f64 {
         self.x * self.x + self.y * self.y + self.z * self.z
     }
@@ -79,6 +46,44 @@ impl Vec3 {
 
     pub fn unit_vector(self) -> Self {
         self / self.length()
+    }
+
+    // --------------------- random algorithm ---------------------
+
+    pub fn random(range: impl SampleRange<f64> + Clone) -> Self {
+        Self::new(
+            random_range(range.clone()),
+            random_range(range.clone()),
+            random_range(range.clone()),
+        )
+    }
+
+    pub fn random_unit_vector() -> Self {
+        Self::new(
+            random_normal_f64(),
+            random_normal_f64(),
+            random_normal_f64(),
+        )
+        .unit_vector()
+    }
+
+    pub fn random_on_hemisphere(normal: Self) -> Self {
+        let on_unit_sphere = Self::random_unit_vector();
+        if on_unit_sphere.dot(normal) > 0.0 {
+            on_unit_sphere
+        } else {
+            -on_unit_sphere
+        }
+    }
+
+    // --------------------- utility ---------------------
+
+    pub fn axis(self, axis: Axis) -> f64 {
+        match axis {
+            Axis::X => self.x,
+            Axis::Y => self.y,
+            Axis::Z => self.z,
+        }
     }
 
     pub fn reflect(self, normal: Self) -> Self {
