@@ -22,11 +22,11 @@ fn main() -> std::io::Result<()> {
     let mut world = HittableList::new();
 
     let ground_material: Arc<dyn Material> = Arc::new(Lambertian::new(Color::new(0.5, 0.5, 0.5)));
-    world.add(Arc::new(Sphere::new(
+    world.add(Sphere::new(
         Point3::new(0.0, -1000.0, 0.0),
         1000.0,
         ground_material,
-    )));
+    ));
 
     for a in -11..11 {
         for b in -11..11 {
@@ -48,32 +48,19 @@ fn main() -> std::io::Result<()> {
                     _ => Arc::new(Dielectric::new(1.5)),
                 };
                 if choose_bounce > 0.5 {
-                    world.add(Arc::new(Sphere::new(center1, 0.2, sphere_material)));
+                    world.add(Sphere::new(center1, 0.2, sphere_material));
                 } else {
-                    world.add(Arc::new(Sphere::new_moving(
-                        center1,
-                        center2,
-                        0.2,
-                        sphere_material,
-                    )));
+                    world.add(Sphere::new_moving(center1, center2, 0.2, sphere_material));
                 }
             }
         }
     }
 
     let material1 = Arc::new(Dielectric::new(1.5));
-    world.add(Arc::new(Sphere::new(
-        Point3::new(0.0, 1.0, 0.0),
-        1.0,
-        material1,
-    )));
+    world.add(Sphere::new(Point3::new(0.0, 1.0, 0.0), 1.0, material1));
 
     let material2 = Arc::new(Lambertian::new(Color::new(0.4, 0.2, 0.1)));
-    world.add(Arc::new(Sphere::new(
-        Point3::new(4.0, 1.0, 0.0),
-        1.0,
-        material2,
-    )));
+    world.add(Sphere::new(Point3::new(4.0, 1.0, 0.0), 1.0, material2));
 
     let resolution = Resolution::with_aspect_ratio(16.0 / 9.0, 1200);
     let cam = Camera::new(

@@ -3,7 +3,7 @@ use crate::prelude::*;
 
 pub struct HittableList {
     bbox: Aabb,
-    pub objects: Vec<Arc<dyn Hittable>>,
+    pub objects: Vec<Box<dyn Hittable>>,
 }
 
 impl HittableList {
@@ -14,15 +14,15 @@ impl HittableList {
         }
     }
 
-    pub fn with(object: Arc<dyn Hittable>) -> Self {
+    pub fn with(object: impl Hittable + 'static) -> Self {
         let mut list = HittableList::new();
         list.add(object);
         list
     }
 
-    pub fn add(&mut self, object: Arc<dyn Hittable>) {
+    pub fn add(&mut self, object: impl Hittable + 'static) {
         self.bbox = Aabb::enclosing(self.bbox, object.bounding_box());
-        self.objects.push(object);
+        self.objects.push(Box::new(object));
     }
 }
 
