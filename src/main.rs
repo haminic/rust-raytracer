@@ -6,7 +6,7 @@ mod prelude;
 
 use std::fs;
 
-use crate::camera::Camera;
+use crate::camera::{Camera, Renderer, Resolution};
 use crate::materials::{Dielectric, Lambertian, Material};
 use crate::objects::hittable_list::HittableList;
 use crate::objects::sphere::Sphere;
@@ -41,19 +41,17 @@ fn main() -> std::io::Result<()> {
         material_bubble.clone(),
     )));
 
+    let resolution = Resolution::with_aspect_ratio(16.0 / 9.0, 400);
     let cam = Camera::new(
-        16.0 / 9.0,
-        400,
-        50,
-        20,
-        20.0,
+        resolution,
+        90.0,
         Point3::new(-2.0, 2.0, 1.0),
         Point3::new(0.0, 0.0, -1.0),
         Vec3::new(0.0, 1.0, 0.0),
     );
+    let renderer = Renderer::new(100, 50);
     let file = get_output_file()?;
-    let mut writer = BufWriter::new(file);
-    cam.render(&mut writer, &world)?;
+    renderer.render(&cam, &world, file)?;
 
     // TODO: Show time elapsed.
     println!("Done.");

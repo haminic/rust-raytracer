@@ -1,13 +1,25 @@
 use crate::objects::Hittable;
 use crate::prelude::*;
 
-pub struct Camera {
-    samples_per_pixel: i32,
-    pixel_samples_scale: f64,
-    max_depth: i32,
+#[derive(Clone, Copy)]
+pub struct Resolution {
+    pub width: i32,
+    pub height: i32,
+}
 
-    image_width: i32,
-    image_height: i32,
+impl Resolution {
+    pub fn new(width: i32, height: i32) -> Self {
+        Self { width, height }
+    }
+
+    pub fn with_aspect_ratio(aspect_ratio: f64, width: i32) -> Self {
+        let height = ((width as f64 / aspect_ratio) as i32).max(1);
+        Self { width, height }
+    }
+}
+
+pub struct Camera {
+    resolution: Resolution,
 
     center: Point3,
     pixel00_loc: Point3,
@@ -17,47 +29,35 @@ pub struct Camera {
 
 impl Camera {
     pub fn new(
-        aspect_ratio: f64,
-        image_width: i32,
-        samples_per_pixel: i32,
-        max_depth: i32,
-        vfov: f64,
+        resolution: Resolution,
+        vertical_fov: f64,
         look_from: Point3,
         look_at: Point3,
-        vup: Vec3,
+        up_direction: Vec3,
     ) -> Self {
-        let image_height = ((image_width as f64 / aspect_ratio) as i32).max(1);
-
-        let pixel_samples_scale = 1.0 / samples_per_pixel as f64;
-
         let center = look_from;
 
         let focal_length = (look_from - look_at).length();
-        let theta = vfov.to_radians();
+        let theta = vertical_fov.to_radians();
         let h = (theta / 2.0).tan();
         let viewport_height = 2.0 * h * focal_length;
-        let viewport_width = viewport_height * (image_width as f64 / image_height as f64);
+        let viewport_width = viewport_height * (resolution.width as f64 / resolution.height as f64);
 
         let w = (look_from - look_at).unit_vector();
-        let u = vup.cross(w).unit_vector();
+        let u = up_direction.cross(w).unit_vector();
         let v = w.cross(u);
 
         let viewport_u = viewport_width * u;
         let viewport_v = -viewport_height * v;
 
-        let pixel_delta_u = viewport_u / image_width as f64;
-        let pixel_delta_v = viewport_v / image_height as f64;
+        let pixel_delta_u = viewport_u / resolution.width as f64;
+        let pixel_delta_v = viewport_v / resolution.height as f64;
 
         let viewport_upper_left = center - focal_length * w - 0.5 * viewport_u - 0.5 * viewport_v;
         let pixel00_loc = viewport_upper_left + 0.5 * pixel_delta_u + 0.5 * pixel_delta_v;
 
         Self {
-            samples_per_pixel,
-            pixel_samples_scale,
-            max_depth,
-
-            image_width,
-            image_height,
+            resolution,
 
             center,
             pixel00_loc,
@@ -66,39 +66,57 @@ impl Camera {
         }
     }
 
-    pub fn render(
-        &self,
-        writer: &mut BufWriter<File>,
-        world: &dyn Hittable,
-    ) -> std::io::Result<()> {
-        writeln!(writer, "P3")?;
-        writeln!(writer, "{} {}", self.image_width, self.image_height)?;
-        writeln!(writer, "255")?;
-
-        for j in 0..self.image_height {
-            // TODO: Show progress bar
-            // let progress = j as f64 / (self.image_height - 1) as f64;
-            // show_progress(progress);
-            for i in 0..self.image_width {
-                println!("pixel ({}, {})", i, j);
-                let mut pixel_color = Color::new(0.0, 0.0, 0.0);
-                for _ in 0..self.samples_per_pixel {
-                    let ray = self.get_ray(i, j);
-                    pixel_color += ray_color(&ray, self.max_depth, world)
-                }
-                write_color(writer, self.pixel_samples_scale * pixel_color)?;
-            }
-        }
-        // println!("\nDone!");
-        Ok(())
-    }
-
-    fn get_ray(&self, i: i32, j: i32) -> Ray {
+    pub fn get_ray(&self, i: i32, j: i32) -> Ray {
         let offset = sample_square();
         let pixel_sample = self.pixel00_loc
             + (i as f64 + offset.x) * self.pixel_delta_u
             + (j as f64 + offset.y) * self.pixel_delta_v;
         Ray::new(self.center, pixel_sample - self.center)
+    }
+}
+
+pub struct Renderer {
+    samples_per_pixel: i32,
+    pixel_samples_scale: f64,
+    max_depth: i32,
+}
+
+impl Renderer {
+    pub fn new(samples_per_pixel: i32, max_depth: i32) -> Self {
+        let pixel_samples_scale = 1.0 / samples_per_pixel as f64;
+        Self {
+            samples_per_pixel,
+            pixel_samples_scale,
+            max_depth,
+        }
+    }
+
+    pub fn render(&self, camera: &Camera, world: &dyn Hittable, file: File) -> std::io::Result<()> {
+        let mut writer = BufWriter::new(file);
+        writeln!(writer, "P3")?;
+        writeln!(
+            writer,
+            "{} {}",
+            camera.resolution.width, camera.resolution.height
+        )?;
+        writeln!(writer, "255")?;
+
+        for j in 0..camera.resolution.height {
+            // TODO: Show progress bar
+            // let progress = j as f64 / (self.image_height - 1) as f64;
+            // show_progress(progress);
+            for i in 0..camera.resolution.width {
+                // println!("pixel ({}, {})", i, j);
+                let mut pixel_color = Color::new(0.0, 0.0, 0.0);
+                for _ in 0..self.samples_per_pixel {
+                    let ray = camera.get_ray(i, j);
+                    pixel_color += ray_color(&ray, self.max_depth, world)
+                }
+                write_color(&mut writer, self.pixel_samples_scale * pixel_color)?;
+            }
+        }
+        // println!("\nDone!");
+        Ok(())
     }
 }
 
