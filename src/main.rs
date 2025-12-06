@@ -5,6 +5,7 @@ mod objects;
 mod prelude;
 
 use std::fs;
+use std::time::Instant;
 
 use crate::camera::{Camera, Renderer, Resolution};
 use crate::materials::{Dielectric, Lambertian, Material};
@@ -13,6 +14,9 @@ use crate::objects::Sphere;
 use crate::prelude::*;
 
 fn main() -> std::io::Result<()> {
+
+    let start_time = Instant::now();    
+
     let mut world = HittableList::new();
 
     let material_ground: Rc<dyn Material> = Rc::new(Lambertian::new(Color::new(0.8, 0.8, 0.0)));
@@ -55,7 +59,8 @@ fn main() -> std::io::Result<()> {
     let file = get_output_file()?;
     renderer.render(&cam, &world, file)?;
 
-    // TODO: Show time elapsed.
+    let elapsed = start_time.elapsed().as_millis();
+    println!("Render time = {}.{} s", elapsed/1000, elapsed%1000);
 
     Ok(())
 }
