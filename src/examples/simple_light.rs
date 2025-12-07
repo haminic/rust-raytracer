@@ -26,5 +26,5 @@ pub fn simple_light() -> (World, Camera){
         0.0,
     );
 
-    (World::new(Color::new(0.70, 0.80, 1.00), Box::new(world)), cam)
+    (World::new(Color::new(0.0, 0.0, 0.0), Box::new(world)), cam)
 }
