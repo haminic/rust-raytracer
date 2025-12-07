@@ -1,4 +1,4 @@
-use super::{Material};
+use super::Material;
 use crate::prelude::*;
 
 pub struct DiffuseLight {
@@ -7,14 +7,12 @@ pub struct DiffuseLight {
 
 impl DiffuseLight {
     pub fn new(emit: Color) -> Self {
-        DiffuseLight{
-            color: emit,
-        }
+        DiffuseLight { color: emit }
     }
 }
 
 impl Material for DiffuseLight {
-    fn emitted(&self, _p: &Point3) -> Color {
+    fn emitted(&self, _: Point3) -> Color {
         self.color
     }
 }
