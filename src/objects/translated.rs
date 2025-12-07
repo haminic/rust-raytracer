@@ -1,5 +1,5 @@
-use crate::objects::{Aabb, Hit, Hittable};
 use crate::prelude::*;
+use crate::objects::{Aabb, Hit, Hittable};
 
 pub struct Translated {
     object: Box<dyn Hittable>,

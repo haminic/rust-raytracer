@@ -1,5 +1,3 @@
-use std::ops::Add;
-
 use crate::prelude::INFINITY;
 
 use std::ops::Add;

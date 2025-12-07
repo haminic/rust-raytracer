@@ -4,12 +4,14 @@ mod hittable_list;
 mod quad;
 mod sphere;
 mod block;
+mod translated;
 
 pub use base::*;
 pub use bvh::Bvh;
 pub use hittable_list::HittableList;
 pub use quad::Quad;
 pub use sphere::Sphere;
+pub use translated::Translated;
 pub use block::Block;
 
 use crate::prelude::*;
