@@ -9,6 +9,22 @@ pub enum Axis {
 
 impl Axis {
     pub const AXES: [Axis; 3] = [Axis::X, Axis::Y, Axis::Z];
+
+    pub fn next(&self) -> Self {
+        match self {
+            Self::X => Self::Y,
+            Self::Y => Self::Z,
+            Self::Z => Self::X,
+        }
+    }
+
+    pub fn prev(&self) -> Self {
+        match self {
+            Self::X => Self::Z,
+            Self::Y => Self::X,
+            Self::Z => Self::Y,
+        }
+    }
 }
 
 impl Distribution<Axis> for StandardUniform {
