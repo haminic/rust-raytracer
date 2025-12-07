@@ -1,7 +1,4 @@
-use crate::camera::*;
-use crate::materials::*;
-use crate::objects::*;
-use crate::prelude::*;
+use super::*;
 
 pub fn bouncing_balls(n: i32) -> (World, Camera) {
     let mut world = HittableList::new();

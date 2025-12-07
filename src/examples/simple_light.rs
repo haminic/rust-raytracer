@@ -1,7 +1,4 @@
-use crate::camera::*;
-use crate::materials::*;
-use crate::objects::*;
-use crate::prelude::*;
+use super::*;
 
 pub fn simple_light() -> (World, Camera){
     let mut world = HittableList::new();

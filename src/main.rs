@@ -1,5 +1,5 @@
 mod base;
-mod camera;
+mod render;
 mod examples;
 mod materials;
 mod objects;
@@ -8,7 +8,7 @@ mod prelude;
 use std::fs;
 use std::time::Instant;
 
-use crate::camera::Renderer;
+use crate::render::*;
 use crate::examples::*;
 use crate::prelude::*;
 

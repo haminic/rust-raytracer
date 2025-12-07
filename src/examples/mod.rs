@@ -5,3 +5,8 @@ mod simple_light;
 pub use bouncing_balls::bouncing_balls;
 pub use cornell_box::cornell_box;
 pub use simple_light::simple_light;
+
+use crate::prelude::*;
+use crate::render::*;
+use crate::materials::*;
+use crate::objects::*;

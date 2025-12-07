@@ -2,6 +2,8 @@ use std::ops::Add;
 
 use crate::prelude::INFINITY;
 
+use std::ops::Add;
+
 #[derive(Clone, Copy)]
 pub struct Interval {
     pub min: f64,

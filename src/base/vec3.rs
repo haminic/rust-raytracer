@@ -2,7 +2,7 @@ use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Sub, SubAssi
 use rand_distr::uniform::SampleRange;
 
 use crate::base::{Axis};
-use crate::prelude::{random_range, random_normal_f64, random_unit_f64};
+use crate::prelude::{random_range, random_normal_f64};
 
 #[derive(Clone, Copy, Debug)]
 pub struct Vec3 {
