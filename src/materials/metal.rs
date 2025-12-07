@@ -16,14 +16,11 @@ impl Metal {
     pub const CHROME_ALBEDO: Color = Color::new(196.0/255.0, 197.0/255.0, 197.0/255.0);
 
     pub const fn new(albedo: Color) -> Self {
-        Self { albedo , fuzz: 1.0 }
+        Self { albedo , fuzz: 0.0 }
     }
 
     pub const fn with_fuzz(albedo: Color, fuzz: f64) -> Self {
-        Self { 
-            albedo,  
-            fuzz: if fuzz < 1.0 {fuzz} else {1.0}
-        }
+        Self { albedo,  fuzz: (Interval::UNIT.clamp(fuzz)) }
     }
 }
 

@@ -12,11 +12,12 @@ use crate::prelude::*;
 use crate::objects::Hit;
 
 pub trait Material: Send + Sync {
-    fn scatter(&self, ray_in: &Ray, hit: &Hit) -> Option<Scatter> {
+
+    fn scatter(&self, _ray_in: &Ray, _hit: &Hit) -> Option<Scatter> {
         None
     }
 
-    fn emitted(&self, p: Point3) -> Color {
+    fn emitted(&self, _point: Point3) -> Color {
         Color::new(0.0, 0.0, 0.0)
     }
 }

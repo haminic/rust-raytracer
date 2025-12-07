@@ -11,6 +11,7 @@ pub struct Interval {
 impl Interval {
     pub const EMPTY: Interval = Interval::new(INFINITY, -INFINITY);
     pub const UNIVERSE: Interval = Interval::new(-INFINITY, INFINITY);
+    pub const UNIT: Interval = Interval::new(0.0 as f64, 1.0 as f64);
 
     pub const fn new(min: f64, max: f64) -> Self {
         Interval { min, max }
