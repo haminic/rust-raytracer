@@ -1,3 +1,5 @@
+use std::ops::Add;
+
 use crate::prelude::*;
 
 /*
@@ -81,5 +83,19 @@ impl Aabb {
         if self.z.size() < delta {
             self.z = self.z.expand(delta);
         }
+    }
+}
+
+impl Add<f64> for Aabb {
+    type Output = Aabb;
+    fn add(self, rhs: f64) -> Self::Output {
+        Aabb::new(self.x + rhs, self.y + rhs, self.z + rhs)
+    }
+}
+
+impl Add<Aabb> for f64 {
+    type Output = Aabb;
+    fn add(self, rhs: Aabb) -> Self::Output {
+        Aabb::new(rhs.x + self, rhs.y + self, rhs.z + self)
     }
 }
