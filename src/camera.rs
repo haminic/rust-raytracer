@@ -193,7 +193,7 @@ fn ray_color(ray: &Ray, depth: i32, world: &World) -> Color {
     //TODO: the return logic is very suspicious and I dont know how to fix it yet. I will come back later
     if let Some(hit) = world.geometry.hit(ray, Interval::new(0.001, INFINITY)) {
         // hit something
-        let emission = hit.mat.emitted(&hit.point);
+        let emission = hit.mat.emitted(hit.point);
         if let Some(scatter) = hit.mat.scatter(ray, &hit) {
             //hit and scatter
             emission + scatter.attenuation * ray_color(&scatter.ray_out, depth - 1, world)
@@ -212,4 +212,3 @@ fn ray_color(ray: &Ray, depth: i32, world: &World) -> Color {
         world.backdrop
     }
 }
-
