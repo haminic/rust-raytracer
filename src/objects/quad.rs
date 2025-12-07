@@ -1,5 +1,5 @@
-use super::{Aabb, Hit, Hittable, Material};
-use crate::{prelude::*};
+use crate::prelude::*;
+use crate::{objects::{Aabb, Hit, Hittable}, materials::Material};
 
 pub struct Quad {
     q: Point3,

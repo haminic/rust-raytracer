@@ -1,5 +1,6 @@
-use super::{Hit, Material, Scatter};
 use crate::prelude::*;
+use crate::objects::Hit;
+use super::{Material, Scatter};
 
 pub struct Dielectric {
     ior_ratio: f64,
@@ -26,7 +27,7 @@ impl Material for Dielectric {
 
         let cannot_refract = ior_ratio * sin_theta > 1.0;
 
-        let direction = if cannot_refract || reflectance(cos_theta, ior_ratio) > random_f64() {
+        let direction = if cannot_refract || reflectance(cos_theta, ior_ratio) > random_unit_f64() {
             unit_direction.reflect(hit.normal)
         } else {
             unit_direction.refract(hit.normal, ior_ratio)

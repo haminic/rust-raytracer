@@ -1,7 +1,7 @@
-use std::cmp::Ordering;
-
-use super::{Aabb, Hit, Hittable};
+use crate::{objects::{Aabb, Hit, Hittable}};
 use crate::{objects::HittableList, prelude::*};
+
+use std::cmp::Ordering;
 
 /*
     Bounding Volume Hierarchy

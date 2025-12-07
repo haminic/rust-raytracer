@@ -1,8 +1,8 @@
 use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Sub, SubAssign};
-
 use rand_distr::uniform::SampleRange;
 
-use crate::prelude::*;
+use crate::base::{Axis};
+use crate::prelude::{random_range, random_normal_f64, random_unit_f64};
 
 #[derive(Clone, Copy, Debug)]
 pub struct Vec3 {
@@ -58,7 +58,8 @@ impl Vec3 {
         )
     }
 
-    pub fn random_unit_vector() -> Self {
+    // Normal Distribution for random vector
+    pub fn random_normal_unit() -> Self {
         Self::new(
             random_normal_f64(),
             random_normal_f64(),
@@ -68,7 +69,7 @@ impl Vec3 {
     }
 
     pub fn random_on_hemisphere(normal: Self) -> Self {
-        let on_unit_sphere = Self::random_unit_vector();
+        let on_unit_sphere = Self::random_normal_unit();
         if on_unit_sphere.dot(normal) > 0.0 {
             on_unit_sphere
         } else {
@@ -152,14 +153,6 @@ impl Div<f64> for Vec3 {
         Vec3::new(self.x / rhs, self.y / rhs, self.z / rhs)
     }
 }
-
-// f64 / Vec3 -> Vec3 ??? Delete; it doesnt make sense
-// impl Div<Vec3> for f64 {
-//     type Output = Vec3;
-//     fn div(self, rhs: Vec3) -> Self::Output {
-//         Vec3::new(rhs.x / self, rhs.y / self, rhs.z / self)
-//     }
-// }
 
 // Vec3 += Vec3
 impl AddAssign for Vec3 {

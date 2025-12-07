@@ -1,4 +1,4 @@
-use crate::prelude::*;
+use crate::base::{Vec3, Point3};
 
 pub struct Ray {
     pub origin: Point3,

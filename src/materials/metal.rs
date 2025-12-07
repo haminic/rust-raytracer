@@ -1,5 +1,6 @@
-use super::{Hit, Material, Scatter};
 use crate::prelude::*;
+use crate::objects::Hit;
+use super::{Material, Scatter};
 
 pub struct Metal {
     albedo: Color,    

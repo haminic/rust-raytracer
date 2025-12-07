@@ -1,5 +1,5 @@
-use super::{Aabb, Hit, Hittable};
 use crate::prelude::*;
+use crate::{objects::{Aabb, Hit, Hittable}};
 
 /*
     Contain all objects in the world

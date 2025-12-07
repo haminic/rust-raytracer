@@ -7,14 +7,15 @@ pub use std::f64::consts::PI;
 
 pub use rand::random_range;
 
+use rand_distr::{Distribution, Normal};
+
 pub use crate::base::*;
 
-pub fn random_f64() -> f64 {
+pub fn random_unit_f64() -> f64 {
     random_range(0.0..1.0)
 }
 
 pub fn random_normal_f64() -> f64 {
-    use rand_distr::{Distribution, Normal};
     let normal = Normal::new(0.0, 1.0).unwrap();
     normal.sample(&mut rand::rng())
 }

@@ -16,7 +16,7 @@ pub use sphere::Sphere;
 pub use translated::Translated;
 pub use block::Block;
 
-use crate::{materials::Material, prelude::*};
+use crate::prelude::*;
 
 pub trait Hittable: Sync {
     fn hit(&self, ray: &Ray, t_range: Interval) -> Option<Hit>;

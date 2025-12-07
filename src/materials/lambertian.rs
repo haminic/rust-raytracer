@@ -1,5 +1,6 @@
-use super::{Hit, Material, Scatter};
 use crate::prelude::*;
+use crate::objects::Hit;
+use super::{Material, Scatter};
 
 pub struct Lambertian {
     albedo: Color,
@@ -13,7 +14,7 @@ impl Lambertian {
 
 impl Material for Lambertian {
     fn scatter(&self, ray_in: &Ray, hit: &Hit) -> Option<Scatter> {
-        let mut scatter_direction = hit.normal + Vec3::random_unit_vector();
+        let mut scatter_direction = hit.normal + Vec3::random_normal_unit();
 
         if scatter_direction.near_zero() {
             scatter_direction = hit.normal;

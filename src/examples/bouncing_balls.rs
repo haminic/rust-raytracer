@@ -15,12 +15,12 @@ pub fn bouncing_balls(n: i32) -> (World, Camera) {
 
     for a in -n..n {
         for b in -n..n {
-            let choose_mat = random_f64();
-            let choose_bounce = random_f64();
+            let choose_mat = random_unit_f64();
+            let choose_bounce = random_unit_f64();
             let center1 = Point3::new(
-                a as f64 + 0.9 * random_f64(),
+                a as f64 + 0.9 * random_unit_f64(),
                 0.2,
-                b as f64 + 0.9 * random_f64(),
+                b as f64 + 0.9 * random_unit_f64(),
             );
             let center2 = center1 + Vec3::new(0.0, random_range(0.0..0.5), 0.0);
 
