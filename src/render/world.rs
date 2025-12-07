@@ -1,8 +1,8 @@
 use super::*;
 
 pub struct World {
-    pub(super) backdrop: Color,
-    pub(super) geometry: Box<dyn Hittable>,
+    pub backdrop: Color,
+    pub geometry: Box<dyn Hittable>,
 }
 
 impl World {

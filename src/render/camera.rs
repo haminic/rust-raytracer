@@ -8,8 +8,8 @@ use super::*;
 
 #[derive(Clone, Copy)]
 pub struct Resolution {
-    pub(super) width: i32,
-    pub(super) height: i32,
+    pub width: i32,
+    pub height: i32,
 }
 
 impl Resolution {
@@ -24,7 +24,7 @@ impl Resolution {
 }
 
 pub struct Camera {
-    pub(super) resolution: Resolution,
+    pub resolution: Resolution,
 
     center: Point3,
     defocus_disk_u: Vec3,

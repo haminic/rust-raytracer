@@ -4,9 +4,9 @@ use rayon::prelude::*;
 use indicatif::{ProgressBar, ProgressStyle};
 
 pub struct Renderer {
-    pub(super) samples_per_pixel: i32,
-    pub(super) pixel_samples_scale: f64,
-    pub(super) max_depth: i32,
+    samples_per_pixel: i32,
+    pixel_samples_scale: f64,
+    max_depth: i32,
 }
 
 impl Renderer {
