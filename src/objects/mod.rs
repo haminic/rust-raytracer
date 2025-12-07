@@ -5,6 +5,7 @@ mod quad;
 mod rotated;
 mod sphere;
 mod translated;
+mod block;
 
 pub use base::*;
 pub use bvh::Bvh;
@@ -13,6 +14,7 @@ pub use quad::Quad;
 pub use rotated::Rotated;
 pub use sphere::Sphere;
 pub use translated::Translated;
+pub use block::Block;
 
 use crate::{materials::Material, prelude::*};
 
