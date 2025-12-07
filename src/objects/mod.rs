@@ -3,18 +3,18 @@ mod block;
 mod bvh;
 mod hittable_list;
 mod quad;
+mod rotate;
 mod sphere;
-mod translated;
-mod translating;
+mod translate;
 
 pub use base::*;
 pub use block::Block;
 pub use bvh::Bvh;
 pub use hittable_list::HittableList;
 pub use quad::Quad;
+pub use rotate::{Rotated, Rotating};
 pub use sphere::Sphere;
-pub use translated::Translated;
-pub use translating::Translating;
+pub use translate::{Translated, Translating};
 
 use crate::prelude::*;
 

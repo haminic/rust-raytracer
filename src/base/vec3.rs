@@ -1,8 +1,8 @@
-use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Sub, SubAssign};
 use rand_distr::uniform::SampleRange;
+use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Sub, SubAssign};
 
-use crate::base::{Axis};
-use crate::prelude::{random_range, random_normal_f64};
+use crate::base::Axis;
+use crate::prelude::{random_normal_f64, random_range};
 
 #[derive(Clone, Copy, Debug)]
 pub struct Vec3 {
@@ -84,6 +84,14 @@ impl Vec3 {
             Axis::X => self.x,
             Axis::Y => self.y,
             Axis::Z => self.z,
+        }
+    }
+
+    pub fn axis_as_mut(&mut self, axis: Axis) -> &mut f64 {
+        match axis {
+            Axis::X => &mut self.x,
+            Axis::Y => &mut self.y,
+            Axis::Z => &mut self.z,
         }
     }
 
