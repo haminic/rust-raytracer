@@ -19,9 +19,9 @@ fn main() -> std::io::Result<()> {
     let renderer = Renderer::new(SAMPLES_PER_PIXEL, MAX_DEPTH);
     let file = get_output_file()?;
 
-    // let (world, camera) = bouncing_balls(10);
+    let (world, camera) = bouncing_balls(10);
     // let (world, camera) = simple_light();
-    let (world, camera) = cornell_box();
+    // let (world, camera) = cornell_box();
 
     let start_time = Instant::now();
     renderer.render(&camera, &world, file)?;
