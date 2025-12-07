@@ -3,7 +3,7 @@ use crate::materials::*;
 use crate::objects::*;
 use crate::prelude::*;
 
-pub fn bouncing_balls(n: i32) -> (impl Hittable, Camera) {
+pub fn bouncing_balls(n: i32) -> (World, Camera) {
     let mut world = HittableList::new();
 
     let ground_material: Arc<dyn Material> = Arc::new(Lambertian::new(Color::new(0.5, 0.5, 0.5)));
@@ -45,7 +45,7 @@ pub fn bouncing_balls(n: i32) -> (impl Hittable, Camera) {
         }
     }
 
-    let material1 = Arc::new(Dielectric::new(1.5));
+    let material1 = Arc::new(DiffuseLight::new(Color::new(1.0, 1.0, 1.0)));
     world.add(Sphere::new(Point3::new(0.0, 1.0, 0.0), 1.0, material1));
 
     let material2 = Arc::new(Lambertian::new(Color::new(0.4, 0.2, 0.1)));
@@ -67,5 +67,5 @@ pub fn bouncing_balls(n: i32) -> (impl Hittable, Camera) {
         0.6,
     );
 
-    (world, cam)
+    (World::new(Color::new(0.0, 0.0, 0.0), Box::new(world)), cam)
 }

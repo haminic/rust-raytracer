@@ -115,7 +115,7 @@ impl Renderer {
         }
     }
 
-    pub fn render(&self, camera: &Camera, world: &dyn Hittable, file: File) -> std::io::Result<()> {
+    pub fn render(&self, camera: &Camera, world: &World, file: File) -> std::io::Result<()> {
         let mut writer = BufWriter::new(file);
         writeln!(writer, "P3")?;
         writeln!(
@@ -162,6 +162,17 @@ impl Renderer {
     }
 }
 
+pub struct World {
+    backdrop: Color,
+    geometry: Box<dyn Hittable>,
+}
+
+impl World {
+    pub fn new(backdrop: Color, geometry: Box<dyn Hittable>) -> Self {
+        Self { backdrop, geometry }
+    }
+}
+
 fn sample_square() -> Vec3 {
     Vec3::new(random_f64() - 0.5, random_f64() - 0.5, 0.0)
 }
@@ -174,27 +185,31 @@ fn sample_in_unit_disk() -> Vec3 {
     Vec3::new(r * cos_theta, r * sin_theta, 0.0)
 }
 
-fn ray_color(ray: &Ray, depth: i32, world: &dyn Hittable) -> Color {
+fn ray_color(ray: &Ray, depth: i32, world: &World) -> Color {
     if depth <= 0 {
         return Color::new(0.0, 0.0, 0.0);
     }
 
     //TODO: the return logic is very suspicious and I dont know how to fix it yet. I will come back later
-    if let Some(hit) = world.hit(ray, Interval::new(0.001, INFINITY)) {
+    if let Some(hit) = world.geometry.hit(ray, Interval::new(0.001, INFINITY)) {
         // hit something
+        let emission = hit.mat.emitted(&hit.point);
         if let Some(scatter) = hit.mat.scatter(ray, &hit) {
             //hit and scatter
-            scatter.attenuation * ray_color(&scatter.ray_out, depth - 1, world)
+            emission + scatter.attenuation * ray_color(&scatter.ray_out, depth - 1, world)
         } else {
             //hit but absorb
-            Color::new(0.0, 0.0, 0.0)
+            // Color::new(0.0, 0.0, 0.0)
+            emission
         }
     } else {
         // not hit anything
-        let unit_direction = ray.direction.unit_vector();
-        let a = 0.5 * (unit_direction.y + 1.0);
-        // return sky_gradient
-        (1.0 - a) * Color::new(1.0, 1.0, 1.0) + a * Color::new(0.5, 0.7, 1.0)
+        // let unit_direction = ray.direction.unit_vector();
+        // let a = 0.5 * (unit_direction.y + 1.0);
+
+        // return sky_gradient (FIX: return backdrop instead)
+        // (1.0 - a) * Color::new(1.0, 1.0, 1.0) + a * Color::new(0.5, 0.7, 1.0)
+        world.backdrop
     }
 }
 

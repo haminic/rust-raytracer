@@ -12,13 +12,14 @@ use crate::camera::Renderer;
 use crate::examples::*;
 use crate::prelude::*;
 
-static SAMPLES_PER_PIXEL: i32 = 5;
-static MAX_DEPTH: i32 = 10;
+static SAMPLES_PER_PIXEL: i32 = 40;
+static MAX_DEPTH: i32 = 40;
 
 fn main() -> std::io::Result<()> {
     let renderer = Renderer::new(SAMPLES_PER_PIXEL, MAX_DEPTH);
     let file = get_output_file()?;
     let (world, camera) = bouncing_balls(10);
+    // let (world, camera) = simple_light();
 
     let start_time = Instant::now();
     renderer.render(&camera, &world, file)?;
