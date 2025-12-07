@@ -29,14 +29,18 @@ impl Hittable for ConstantMedium {
         let Some(mut hit2) = self.boundary.hit(ray, Interval::new(hit1.t + EPSILON, INFINITY)) else { return None; };
 
         if hit1.t < t_range.min {hit1.t = t_range.min;}
-        if hit2.t > t_range.max {hit1.t = t_range.max;}
+        if hit2.t > t_range.max {hit2.t = t_range.max;}
 
         if hit1.t >= hit2.t { return None; }
         if hit1.t < 0.0 { hit1.t = 0.0; }
 
         let ray_lenght:f64 = ray.direction.length();
-        let distance_inside_boundary:f64 = (hit1.t-hit2.t) * ray_lenght;
+        // I found it here typo -> total reflection -> kinetice theory of gas is crying
+        let distance_inside_boundary:f64 = (hit2.t-hit1.t) * ray_lenght;
         let hit_distance:f64 = self.neg_inv_density * random_unit_f64().ln();
+
+        // forgot to return HERE, GENPHYS is crying now
+        if hit_distance > distance_inside_boundary { return None; }
 
         let t: f64 = hit1.t + hit_distance / ray_lenght;
 

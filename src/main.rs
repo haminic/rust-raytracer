@@ -12,8 +12,8 @@ use crate::examples::*;
 use crate::prelude::*;
 use crate::render::*;
 
-static SAMPLES_PER_PIXEL: i32 = 50; // For cornell_box should be 200
-static MAX_DEPTH: i32 = 25; // For cornell_box should be 50
+static SAMPLES_PER_PIXEL: i32 = 100; // For cornell_box should be 200
+static MAX_DEPTH: i32 = 50; // For cornell_box should be 50
 
 fn main() -> std::io::Result<()> {
     let renderer = Renderer::new(SAMPLES_PER_PIXEL, MAX_DEPTH);
