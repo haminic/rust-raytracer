@@ -1,5 +1,5 @@
-use super::{Hit, Hittable, Material};
-use crate::{objects::Aabb, prelude::*};
+use super::{Aabb, Hit, Hittable, Material};
+use crate::prelude::*;
 
 pub struct Sphere {
     center: Ray,

@@ -2,12 +2,14 @@ mod aabb;
 mod bvh;
 mod hit;
 mod hittable_list;
+mod quad;
 mod sphere;
 
 pub use aabb::Aabb;
 pub use bvh::Bvh;
 pub use hit::Hit;
 pub use hittable_list::HittableList;
+pub use quad::Quad;
 pub use sphere::Sphere;
 
 use crate::{materials::Material, prelude::*};

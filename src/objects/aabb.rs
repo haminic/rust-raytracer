@@ -16,17 +16,19 @@ impl Aabb {
     pub const EMPTY: Self = Self::new(Interval::EMPTY, Interval::EMPTY, Interval::EMPTY);
 
     pub const fn new(x: Interval, y: Interval, z: Interval) -> Self {
-        Self { x, y, z }
+        let mut aabb = Self { x, y, z };
+        aabb.pad_to_minimum();
+        aabb
     }
 
-    pub fn from_corners(a: Point3, b: Point3) -> Self {
+    pub const fn from_corners(a: Point3, b: Point3) -> Self {
         let x = Interval::new(a.x.min(b.x), a.x.max(b.x));
         let y = Interval::new(a.y.min(b.y), a.y.max(b.y));
         let z = Interval::new(a.z.min(b.z), a.z.max(b.z));
-        Self { x, y, z }
+        Self::new(x, y, z)
     }
 
-    pub fn enclosing(a: Self, b: Self) -> Self {
+    pub const fn enclosing(a: Self, b: Self) -> Self {
         Self::new(
             Interval::enclosing(a.x, b.x),
             Interval::enclosing(a.y, b.y),
@@ -34,7 +36,7 @@ impl Aabb {
         )
     }
 
-    pub fn axis(&self, axis: Axis) -> Interval {
+    pub const fn axis(&self, axis: Axis) -> Interval {
         match axis {
             Axis::X => self.x,
             Axis::Y => self.y,
@@ -66,5 +68,18 @@ impl Aabb {
             }
         }
         true
+    }
+
+    const fn pad_to_minimum(&mut self) {
+        let delta = 0.0001;
+        if self.x.size() < delta {
+            self.x = self.x.expand(delta);
+        }
+        if self.y.size() < delta {
+            self.y = self.y.expand(delta);
+        }
+        if self.z.size() < delta {
+            self.z = self.z.expand(delta);
+        }
     }
 }
