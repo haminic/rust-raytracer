@@ -37,7 +37,7 @@ pub fn bouncing_balls(n: i32) -> (World, Camera) {
                 if choose_bounce > 0.5 {
                     world.add(sphere);
                 } else {
-                    world.add(Translated::new_moving(
+                    world.add(Translating::new(
                         sphere,
                         Vec3::new(0.0, 0.0, 0.0),
                         translation,

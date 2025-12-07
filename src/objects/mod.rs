@@ -1,18 +1,20 @@
 mod base;
+mod block;
 mod bvh;
 mod hittable_list;
 mod quad;
 mod sphere;
-mod block;
 mod translated;
+mod translating;
 
 pub use base::*;
+pub use block::Block;
 pub use bvh::Bvh;
 pub use hittable_list::HittableList;
 pub use quad::Quad;
 pub use sphere::Sphere;
 pub use translated::Translated;
-pub use block::Block;
+pub use translating::Translating;
 
 use crate::prelude::*;
 
