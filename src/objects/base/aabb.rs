@@ -86,16 +86,16 @@ impl Aabb {
     }
 }
 
-impl Add<f64> for Aabb {
+impl Add<Vec3> for Aabb {
     type Output = Aabb;
-    fn add(self, rhs: f64) -> Self::Output {
-        Aabb::new(self.x + rhs, self.y + rhs, self.z + rhs)
+    fn add(self, rhs: Vec3) -> Self::Output {
+        Aabb::new(self.x + rhs.x, self.y + rhs.y, self.z + rhs.z)
     }
 }
 
-impl Add<Aabb> for f64 {
+impl Add<Aabb> for Vec3 {
     type Output = Aabb;
     fn add(self, rhs: Aabb) -> Self::Output {
-        Aabb::new(rhs.x + self, rhs.y + self, rhs.z + self)
+        Aabb::new(rhs.x + self.x, rhs.y + self.y, rhs.z + self.z)
     }
 }
