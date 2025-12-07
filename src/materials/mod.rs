@@ -2,11 +2,13 @@ mod dielectric;
 mod lambertian;
 mod light;
 mod metal;
+mod isotropic;
 
 pub use dielectric::Dielectric;
 pub use lambertian::Lambertian;
 pub use light::DiffuseLight;
 pub use metal::Metal;
+pub use isotropic::Isotropic;
 
 use crate::prelude::*;
 use crate::objects::Hit;

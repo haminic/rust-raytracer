@@ -6,6 +6,7 @@ mod quad;
 mod sphere;
 mod translated;
 mod translating;
+mod constant_medium;
 
 pub use base::*;
 pub use block::Block;
@@ -15,6 +16,7 @@ pub use quad::Quad;
 pub use sphere::Sphere;
 pub use translated::Translated;
 pub use translating::Translating;
+pub use constant_medium::ConstantMedium;
 
 use crate::prelude::*;
 
