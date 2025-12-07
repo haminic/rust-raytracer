@@ -2,6 +2,7 @@ use crate::materials::Material;
 use crate::objects::*;
 use crate::base::*;
 use crate::{Arc};
+
 pub struct Block {
     faces: HittableList
 }

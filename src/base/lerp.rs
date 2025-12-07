@@ -1,5 +1,9 @@
 use std::ops::{Add, Mul};
 
+/*
+    Linear Interpolation
+*/
+
 pub struct Lerp<T> {
     pub begin: T,
     pub end: T,

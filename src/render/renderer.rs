@@ -76,20 +76,11 @@ fn ray_color(ray: &Ray, depth: i32, world: &World) -> Color {
         // hit something
         let emission = hit.mat.emitted(hit.point);
         if let Some(scatter) = hit.mat.scatter(ray, &hit) {
-            //hit and scatter
             emission + scatter.attenuation * ray_color(&scatter.ray_out, depth - 1, world)
         } else {
-            //hit but absorb
-            // Color::new(0.0, 0.0, 0.0)
             emission
         }
     } else {
-        // not hit anything
-        // let unit_direction = ray.direction.unit_vector();
-        // let a = 0.5 * (unit_direction.y + 1.0);
-
-        // return sky_gradient (FIX: return backdrop instead)
-        // (1.0 - a) * Color::new(1.0, 1.0, 1.0) + a * Color::new(0.5, 0.7, 1.0)
         world.backdrop
     }
 }
