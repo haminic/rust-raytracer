@@ -16,10 +16,14 @@ pub fn cornell_smoke() -> (World, Camera) {
     world.add(Quad::new(Point3::new(0.0,0.0,0.0), Vec3::new(555.0,0.0,0.0), Vec3::new(0.0,0.0,555.0), white.clone()));
     world.add(Quad::new(Point3::new(0.0,0.0,555.0), Vec3::new(555.0,0.0,0.0), Vec3::new(0.0,555.0,0.0), white.clone()));
 
-    let mut box1 = Block::new(Point3::new(130.0, 0.0, 65.0), Point3::new(165.00, 330.0, 165.0), white.clone());
+    let box1 = Block::new(Point3::new(0.0, 0.0, 0.0), Point3::new(165.00, 330.0, 165.0), white.clone());
+    let box1 = Rotated::new(box1, Point3::new(0.0, 0.0, 0.0), Axis::Y, 15.0);
+    let box1 = Translated::new(box1, Vec3::new(256.0, 0.0, 295.0));
     
-    let mut box2 = Block::new(Point3::new(265.0, 0.0, 295.0), Point3::new(165.0, 165.0, 165.0), white.clone());
-
+    let box2 = Block::new(Point3::new(0.0, 0.0, 0.0), Point3::new(165.0, 165.0, 165.0), white.clone());
+    let box2 = Rotated::new(box2, Point3::new(0.0, 0.0, 0.0), Axis::Y, -18.0);
+    let box2 = Translated::new(box2, Vec3::new(130.0, 0.0, 65.0));
+    
     world.add(ConstantMedium::new(box1, 0.01, Color::new(0.0, 0.0, 0.0)));
     world.add(ConstantMedium::new(box2, 0.01, Color::new(1.0, 1.0, 1.0)));
 
