@@ -17,14 +17,14 @@ pub fn bouncing_balls(n: i32) -> (World, Camera) {
         for b in -n..n {
             let choose_mat = random_unit_f64();
             let choose_bounce = random_unit_f64();
-            let center1 = Point3::new(
+            let center = Point3::new(
                 a as f64 + 0.9 * random_unit_f64(),
                 0.2,
                 b as f64 + 0.9 * random_unit_f64(),
             );
-            let center2 = center1 + Vec3::new(0.0, random_range(0.0..0.5), 0.0);
+            let translation = Vec3::new(0.0, random_range(0.0..0.5), 0.0);
 
-            if (center1 - Point3::new(4.0, 0.2, 0.0)).length() > 0.9 {
+            if (center - Point3::new(4.0, 0.2, 0.0)).length() > 0.9 {
                 let sphere_material: Arc<dyn Material> = match choose_mat {
                     x if x < 0.5 => {
                         let albedo = Color::random(0.0..1.0) * Color::random(0.0..1.0);
@@ -36,10 +36,15 @@ pub fn bouncing_balls(n: i32) -> (World, Camera) {
                     }
                     _ => Arc::new(Dielectric::new(1.5)),
                 };
+                let sphere = Sphere::new(center, 0.2, sphere_material);
                 if choose_bounce > 0.5 {
-                    world.add(Sphere::new(center1, 0.2, sphere_material));
+                    world.add(sphere);
                 } else {
-                    world.add(Sphere::new_moving(center1, center2, 0.2, sphere_material));
+                    world.add(Translated::new_moving(
+                        sphere,
+                        Vec3::new(0.0, 0.0, 0.0),
+                        translation,
+                    ));
                 }
             }
         }
@@ -67,5 +72,8 @@ pub fn bouncing_balls(n: i32) -> (World, Camera) {
         0.6,
     );
 
-    (World::new(Color::new(0.70, 0.80, 1.00), Box::new(world)), cam)
+    (
+        World::new(Color::new(0.70, 0.80, 1.00), Box::new(world)),
+        cam,
+    )
 }

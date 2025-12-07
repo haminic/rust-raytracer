@@ -2,7 +2,7 @@ use crate::prelude::*;
 use crate::{objects::{Aabb, Hit, Hittable}, materials::Material};
 
 pub struct Sphere {
-    center: Ray,
+    center: Point3,
     radius: f64,
     mat: Arc<dyn Material>,
     bbox: Aabb,
@@ -11,7 +11,7 @@ pub struct Sphere {
 impl Sphere {
     pub fn new(center: Point3, radius: f64, mat: Arc<dyn Material>) -> Self {
         Self {
-            center: Ray::new(center, Vec3::new(0.0, 0.0, 0.0)),
+            center,
             radius: radius.max(0.0),
             mat,
             bbox: Aabb::new(
@@ -19,30 +19,6 @@ impl Sphere {
                 Interval::centered_at(center.y, radius),
                 Interval::centered_at(center.z, radius),
             ),
-        }
-    }
-
-    pub fn new_moving(
-        center1: Point3,
-        center2: Point3,
-        radius: f64,
-        mat: Arc<dyn Material>,
-    ) -> Self {
-        let initial_bbox = Aabb::new(
-            Interval::centered_at(center1.x, radius),
-            Interval::centered_at(center1.y, radius),
-            Interval::centered_at(center1.z, radius),
-        );
-        let final_bbox = Aabb::new(
-            Interval::centered_at(center2.x, radius),
-            Interval::centered_at(center2.y, radius),
-            Interval::centered_at(center2.z, radius),
-        );
-        Self {
-            center: Ray::new(center1, center2 - center1),
-            radius,
-            mat,
-            bbox: Aabb::enclosing(initial_bbox, final_bbox),
         }
     }
 }
@@ -59,9 +35,7 @@ impl Hittable for Sphere {
 
         */
 
-        let current_center = self.center.at(ray.time);
-
-        let oc = current_center - ray.origin;
+        let oc = self.center - ray.origin;
         let a = ray.direction.length_squared();
         let h = ray.direction.dot(oc);
         let c = oc.length_squared() - self.radius * self.radius;
@@ -82,7 +56,7 @@ impl Hittable for Sphere {
         }
 
         let point = ray.at(root);
-        let outward_normal = (point - current_center) / self.radius;
+        let outward_normal = (point - self.center) / self.radius;
         let hit = Hit::new(&ray, point, outward_normal, self.mat.clone(), root);
         Some(hit)
     }

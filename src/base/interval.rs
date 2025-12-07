@@ -1,3 +1,5 @@
+use std::ops::Add;
+
 use crate::prelude::INFINITY;
 
 #[derive(Clone, Copy)]
