@@ -12,15 +12,16 @@ use crate::camera::Renderer;
 use crate::examples::*;
 use crate::prelude::*;
 
-static SAMPLES_PER_PIXEL: i32 = 5;
-static MAX_DEPTH: i32 = 10;
+static SAMPLES_PER_PIXEL: i32 = 5; // For cornell_box should be 200
+static MAX_DEPTH: i32 = 10; // For cornell_box should be 50
 
 fn main() -> std::io::Result<()> {
     let renderer = Renderer::new(SAMPLES_PER_PIXEL, MAX_DEPTH);
     let file = get_output_file()?;
 
-    let (world, camera) = bouncing_balls(10);
+    // let (world, camera) = bouncing_balls(10);
     // let (world, camera) = simple_light();
+    let (world, camera) = cornell_box();
 
     let start_time = Instant::now();
     renderer.render(&camera, &world, file)?;
