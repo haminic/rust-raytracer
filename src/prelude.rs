@@ -11,6 +11,8 @@ use rand_distr::{Distribution, Normal};
 
 pub use crate::base::*;
 
+// utility functions
+
 pub fn random_unit_f64() -> f64 {
     random_range(0.0..1.0)
 }

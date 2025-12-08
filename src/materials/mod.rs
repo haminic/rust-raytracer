@@ -1,20 +1,19 @@
 mod dielectric;
+mod isotropic;
 mod lambertian;
 mod light;
 mod metal;
-mod isotropic;
 
 pub use dielectric::Dielectric;
+pub use isotropic::Isotropic;
 pub use lambertian::Lambertian;
 pub use light::DiffuseLight;
 pub use metal::Metal;
-pub use isotropic::Isotropic;
 
-use crate::prelude::*;
 use crate::objects::Hit;
+use crate::prelude::*;
 
 pub trait Material: Send + Sync {
-
     fn scatter(&self, _ray_in: &Ray, _hit: &Hit) -> Option<Scatter> {
         None
     }

@@ -1,6 +1,6 @@
-use crate::prelude::*;
-use crate::objects::Hit;
 use super::{Material, Scatter};
+use crate::objects::Hit;
+use crate::prelude::*;
 
 /*
     This is not actally isotropic
@@ -13,7 +13,9 @@ pub struct Isotropic {
 }
 
 impl Isotropic {
-    pub fn new(albedo: Color) -> Self { Self { albedo } }
+    pub fn new(albedo: Color) -> Self {
+        Self { albedo }
+    }
 }
 
 impl Material for Isotropic {

@@ -1,5 +1,5 @@
-use crate::prelude::*;
 use super::Material;
+use crate::prelude::*;
 
 pub struct DiffuseLight {
     color: Color,

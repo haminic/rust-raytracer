@@ -1,7 +1,7 @@
 use std::fs::File;
 use std::io::{BufWriter, Write};
 
-use crate::base::{Vec3, Interval};
+use crate::base::{Interval, Vec3};
 
 pub type Color = Vec3;
 

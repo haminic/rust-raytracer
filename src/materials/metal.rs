@@ -1,26 +1,26 @@
-use crate::prelude::*;
-use crate::objects::Hit;
 use super::{Material, Scatter};
+use crate::objects::Hit;
+use crate::prelude::*;
 
 pub struct Metal {
-    albedo: Color,    
+    albedo: Color,
     fuzz: f64,
 }
 
 impl Metal {
-    #[allow(dead_code)]
-    pub const SILVER_ALBEDO: Color = Color::new(252.0/256.0, 250.0/256.0, 245.0/256.0);
-    #[allow(dead_code)]
-    pub const GOLD_ALBEDO: Color = Color::new(255.0/256.0, 226.0/256.0, 155.0/256.0);
-    #[allow(dead_code)]
-    pub const CHROME_ALBEDO: Color = Color::new(196.0/255.0, 197.0/255.0, 197.0/255.0);
+    pub const SILVER_ALBEDO: Color = Color::new(252.0 / 256.0, 250.0 / 256.0, 245.0 / 256.0);
+    pub const GOLD_ALBEDO: Color = Color::new(255.0 / 256.0, 226.0 / 256.0, 155.0 / 256.0);
+    pub const CHROME_ALBEDO: Color = Color::new(196.0 / 255.0, 197.0 / 255.0, 197.0 / 255.0);
 
     pub const fn new(albedo: Color) -> Self {
-        Self { albedo , fuzz: 0.0 }
+        Self { albedo, fuzz: 0.0 }
     }
 
     pub const fn with_fuzz(albedo: Color, fuzz: f64) -> Self {
-        Self { albedo,  fuzz: (Interval::UNIT.clamp(fuzz)) }
+        Self {
+            albedo,
+            fuzz: (Interval::UNIT.clamp(fuzz)),
+        }
     }
 }
 

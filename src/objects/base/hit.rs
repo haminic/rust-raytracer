@@ -1,5 +1,5 @@
-use crate::prelude::*;
 use crate::materials::Material;
+use crate::prelude::*;
 
 /*
     This is class is equivalence to hit record

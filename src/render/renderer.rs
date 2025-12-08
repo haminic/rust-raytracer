@@ -24,7 +24,7 @@ impl Renderer {
         camera: &Camera,
         world: &World,
         file: File,
-        style: ProgressStyle,
+        style: Option<ProgressStyle>,
     ) -> std::io::Result<()> {
         let mut writer = BufWriter::new(file);
         writeln!(writer, "P3")?;
@@ -34,6 +34,12 @@ impl Renderer {
             camera.resolution.width, camera.resolution.height
         )?;
         writeln!(writer, "255")?;
+
+        let style = style.unwrap_or(
+            ProgressStyle::with_template("[{elapsed_precise}] [{bar:40}] {percent:>3}%")
+                .unwrap()
+                .progress_chars("#>-"),
+        );
 
         let total_pixels = camera.resolution.width * camera.resolution.height;
         let pb = Arc::new(ProgressBar::new(total_pixels as u64));
@@ -71,7 +77,7 @@ impl Renderer {
         camera: &Camera,
         world: &World,
         file: File,
-        style: ProgressStyle,
+        style: Option<ProgressStyle>,
     ) -> std::io::Result<()> {
         let mut writer = BufWriter::new(file);
         writeln!(writer, "P3")?;
@@ -81,6 +87,12 @@ impl Renderer {
             camera.resolution.width, camera.resolution.height
         )?;
         writeln!(writer, "255")?;
+
+        let style = style.unwrap_or(
+            ProgressStyle::with_template("[{elapsed_precise}] [{bar:40}] {percent:>3}%")
+                .unwrap()
+                .progress_chars("#>-"),
+        );
 
         let total_pixels = camera.resolution.width * camera.resolution.height;
         let pb = ProgressBar::new(total_pixels as u64);

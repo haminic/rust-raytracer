@@ -1,5 +1,3 @@
-use std::f64::consts::FRAC_PI_2;
-
 use crate::objects::{Aabb, Hit, Hittable};
 use crate::prelude::*;
 

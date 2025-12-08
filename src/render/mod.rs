@@ -2,12 +2,14 @@ mod camera;
 mod renderer;
 mod world;
 
-pub use camera::{Resolution, Camera};
+pub use camera::{Camera, Resolution};
 pub use renderer::Renderer;
 pub use world::World;
 
-use crate::prelude::*;
 use crate::objects::Hittable;
+use crate::prelude::*;
+
+// utility functions
 
 fn sample_square() -> Vec3 {
     Vec3::new(random_unit_f64() - 0.5, random_unit_f64() - 0.5, 0.0)

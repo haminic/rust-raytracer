@@ -1,7 +1,34 @@
-use super::*;
+use std::sync::Arc;
+
+use rust_raytracer::base::*;
+use rust_raytracer::materials::*;
+use rust_raytracer::objects::*;
+use rust_raytracer::render::*;
+
+static SAMPLES_PER_PIXEL: i32 = 20;
+static MAX_DEPTH: i32 = 10;
+
+fn main() -> std::io::Result<()> {
+    let renderer = Renderer::new(SAMPLES_PER_PIXEL, MAX_DEPTH);
+    let file = get_output_file("cornell_box")?;
+
+    let (world, camera) = cornell_box();
+
+    renderer.multi_threaded_render(&camera, &world, file, None)?;
+
+    Ok(())
+}
+
+fn get_output_file(name: &str) -> std::io::Result<std::fs::File> {
+    let mut path = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"));
+    path.push("output");
+    std::fs::create_dir_all(&path)?;
+    path.push(format!("{name}.ppm"));
+    std::fs::File::create(path)
+}
 
 pub fn cornell_box() -> (World, Camera) {
-    let mut world = HittableList::new();
+    let mut geometry = HittableList::new();
 
     let red: Arc<dyn Material> = Arc::new(Lambertian::new(Color::new(0.65, 0.05, 0.05)));
     let white: Arc<dyn Material> = Arc::new(Lambertian::new(Color::new(0.73, 0.73, 0.73)));
@@ -9,37 +36,37 @@ pub fn cornell_box() -> (World, Camera) {
 
     let light = Arc::new(DiffuseLight::new(Color::new(15.0, 15.0, 15.0)));
 
-    world.add(Quad::new(
+    geometry.add(Quad::new(
         Point3::new(555.0, 0.0, 0.0),
         Vec3::new(0.0, 555.0, 0.0),
         Vec3::new(0.0, 0.0, 555.0),
         green,
     ));
-    world.add(Quad::new(
+    geometry.add(Quad::new(
         Point3::new(0.0, 0.0, 0.0),
         Vec3::new(0.0, 555.0, 0.0),
         Vec3::new(0.0, 0.0, 555.0),
         red,
     ));
-    world.add(Quad::new(
+    geometry.add(Quad::new(
         Point3::new(343.0, 554.0, 332.0),
         Vec3::new(-130.0, 0.0, 0.0),
         Vec3::new(0.0, 0.0, -105.0),
         light,
     ));
-    world.add(Quad::new(
+    geometry.add(Quad::new(
         Point3::new(0.0, 0.0, 0.0),
         Vec3::new(555.0, 0.0, 0.0),
         Vec3::new(0.0, 0.0, 555.0),
         white.clone(),
     ));
-    world.add(Quad::new(
+    geometry.add(Quad::new(
         Point3::new(555.0, 555.0, 555.0),
         Vec3::new(-555.0, 0.0, 0.0),
         Vec3::new(0.0, 0.0, -555.0),
         white.clone(),
     ));
-    world.add(Quad::new(
+    geometry.add(Quad::new(
         Point3::new(0.0, 0.0, 555.0),
         Vec3::new(555.0, 0.0, 0.0),
         Vec3::new(0.0, 555.0, 0.0),
@@ -51,14 +78,14 @@ pub fn cornell_box() -> (World, Camera) {
         Point3::new(295.0, 165.0, 230.0),
         white.clone(),
     );
-    world.add(Rotated::new(
+    geometry.add(Rotated::new(
         block1,
         Point3::new(210.0, 0.0, 150.0),
         Axis::Y,
         20.0,
     ));
 
-    world.add(Block::new(
+    geometry.add(Block::new(
         Point3::new(265.0, 0.0, 295.0),
         Point3::new(430.0, 330.0, 460.0),
         white.clone(),
@@ -75,5 +102,5 @@ pub fn cornell_box() -> (World, Camera) {
         0.0,
     );
 
-    (World::new(Color::new(0.0, 0.0, 0.0), Box::new(world)), cam)
+    (World::new(Color::new(0.0, 0.0, 0.0), geometry), cam)
 }

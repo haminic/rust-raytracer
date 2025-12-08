@@ -6,7 +6,10 @@ pub struct World {
 }
 
 impl World {
-    pub fn new(backdrop: Color, geometry: Box<dyn Hittable>) -> Self {
-        Self { backdrop, geometry }
+    pub fn new(backdrop: Color, geometry: impl Hittable + 'static) -> Self {
+        Self {
+            backdrop,
+            geometry: Box::new(geometry),
+        }
     }
 }

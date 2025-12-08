@@ -1,6 +1,6 @@
-use crate::prelude::*;
-use crate::objects::Hit;
 use super::{Material, Scatter};
+use crate::objects::Hit;
+use crate::prelude::*;
 
 pub struct Lambertian {
     albedo: Color,

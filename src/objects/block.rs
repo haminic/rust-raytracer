@@ -1,27 +1,18 @@
 use crate::materials::Material;
-use crate::objects::*;
-use crate::base::*;
-use crate::{Arc};
+use crate::objects::{Aabb, Hit, Hittable, HittableList, Quad};
+use crate::prelude::*;
 
 pub struct Block {
-    faces: HittableList
+    faces: HittableList,
 }
 
 impl Block {
     pub fn new(a: Point3, b: Point3, mat: Arc<dyn Material>) -> Self {
         let mut faces = HittableList::new();
 
-        let min =  Point3::new(
-            f64::min(a.x, b.x),
-            f64::min(a.y, b.y),
-            f64::min(a.z, b.z),
-        );
+        let min = Point3::new(f64::min(a.x, b.x), f64::min(a.y, b.y), f64::min(a.z, b.z));
 
-        let max =  Point3::new(
-            f64::max(a.x, b.x),
-            f64::max(a.y, b.y),
-            f64::max(a.z, b.z),
-        );
+        let max = Point3::new(f64::max(a.x, b.x), f64::max(a.y, b.y), f64::max(a.z, b.z));
 
         let dx = Vec3::new(max.x - min.x, 0.0, 0.0);
         let dy = Vec3::new(0.0, max.y - min.y, 0.0);
@@ -34,7 +25,7 @@ impl Block {
             dy,
             mat.clone(),
         ));
-        
+
         // Right
         faces.add(Quad::new(
             Point3::new(max.x, min.y, max.z),
