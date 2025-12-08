@@ -8,21 +8,25 @@ use rust_raytracer::render::*;
 
 static SAMPLES_PER_PIXEL: i32 = 20;
 static MAX_DEPTH: i32 = 10;
-static N_BALLS: i32 = 100;
+static N_BALLS: i32 = 50;
 
 fn main() -> std::io::Result<()> {
     let renderer = Renderer::new(SAMPLES_PER_PIXEL, MAX_DEPTH);
 
-    let file = get_output_file("bouncing_balls_st")?;
-    let (world, camera) = bouncing_balls(N_BALLS, false);
+    let (world, camera) = bouncing_balls(N_BALLS, true);
+    println!("Render Task #1: Multi-threaded, using BVH tree");
+    let file = get_output_file("bouncing_balls_mt_bvh")?;
     renderer.multi_threaded_render(&camera, &world, file, None)?;
 
+    let (world, camera) = bouncing_balls(N_BALLS, false);
+    println!("Render Task #2: Multi-threaded, using array");
     let file = get_output_file("bouncing_balls_mt")?;
     renderer.multi_threaded_render(&camera, &world, file, None)?;
 
     let (world, camera) = bouncing_balls(N_BALLS, false);
-    let file = get_output_file("bouncing_balls_mt_bvh")?;
-    renderer.multi_threaded_render(&camera, &world, file, None)?;
+    println!("Render Task #3: Single-threaded, using array (WARNING: Takes very long)");
+    let file = get_output_file("bouncing_balls_st")?;
+    renderer.single_threaded_render(&camera, &world, file, None)?;
 
     Ok(())
 }
@@ -106,9 +110,9 @@ pub fn bouncing_balls(n: i32, bvh: bool) -> (World, Camera) {
 
     (
         if bvh {
-            World::new(backdrop_color, geometry)
-        } else {
             World::new(backdrop_color, Bvh::from_list(geometry))
+        } else {
+            World::new(backdrop_color, geometry)
         },
         cam,
     )
