@@ -23,7 +23,7 @@ pub trait Randomable {
 }
 
 pub struct Uniform;
-pub struct F2x;
+pub struct Custom;
 
 
 impl Randomable for Uniform {
@@ -31,13 +31,13 @@ impl Randomable for Uniform {
     fn eval(&self, _x: f64) -> f64 { 1.0 }
 }
 
-impl Randomable for F2x {
+impl Randomable for Custom {
     const SUPREMUM: f64 = 2.0;
-    fn eval(&self, x: f64) -> f64 { 2.0 * x }
+    fn eval(&self, x: f64) -> f64 { 3.0 * x * x }
 }
 
 pub struct Randomizer;
 impl Randomizer {
     pub const UNIFORM: Uniform = Uniform;
-    pub const F2X: F2x = F2x;
+    pub const CUSTOM: Custom = Custom;
 }

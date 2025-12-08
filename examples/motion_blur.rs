@@ -5,8 +5,8 @@ use rust_raytracer::materials::*;
 use rust_raytracer::objects::*;
 use rust_raytracer::render::*;
 
-static SAMPLES_PER_PIXEL: i32 = 40;
-static MAX_DEPTH: i32 = 10;
+static SAMPLES_PER_PIXEL: i32 = 200;
+static MAX_DEPTH: i32 = 20;
 
 fn main() -> std::io::Result<()> {
     let renderer = Renderer::new(SAMPLES_PER_PIXEL, MAX_DEPTH);
@@ -99,7 +99,7 @@ pub fn motion_blur() -> (World, Camera) {
     let block2 = Translating::new(
         block2,
         Vec3::new(130.0, 350.0, 180.0),
-        Vec3::new(100.0, 310.0, 190.0),
+        Vec3::new(100.0, 250.0, 190.0),
     );
     geometry.add(block2);
 
