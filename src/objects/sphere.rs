@@ -2,6 +2,7 @@ use crate::materials::Material;
 use crate::objects::{Aabb, Hit, Hittable};
 use crate::prelude::*;
 
+#[derive(Clone)]
 pub struct Sphere {
     center: Point3,
     radius: f64,
