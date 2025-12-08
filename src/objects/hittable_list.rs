@@ -29,6 +29,11 @@ impl HittableList {
         self.bbox = Aabb::enclosing(self.bbox, object.bounding_box());
         self.objects.push(Box::new(object));
     }
+
+    pub fn merge(&mut self, mut other: HittableList) {
+        self.bbox = Aabb::enclosing(self.bbox, other.bounding_box());
+        self.objects.append(&mut other.objects);
+    }
 }
 
 impl Hittable for HittableList {
