@@ -74,22 +74,22 @@ pub fn cornell_box() -> (World, Camera) {
     ));
 
     let block1 = Block::new(
-        Point3::new(130.0, 0.0, 65.0),
-        Point3::new(295.0, 165.0, 230.0),
+        Point3::new(0.0, 0.0, 0.0),
+        Point3::new(165.0, 330.0, 165.0),
         white.clone(),
     );
-    geometry.add(Rotated::new(
-        block1,
-        Point3::new(210.0, 0.0, 150.0),
-        Axis::Y,
-        20.0,
-    ));
+    let block1 = Rotated::new(block1, Point3::new(0.0, 0.0, 0.0), Axis::Y, 15.0);
+    let block1 = Translated::new(block1, Vec3::new(265.0, 0.0, 295.0));
+    geometry.add(block1);
 
-    geometry.add(Block::new(
-        Point3::new(265.0, 0.0, 295.0),
-        Point3::new(430.0, 330.0, 460.0),
+    let block2 = Block::new(
+        Point3::new(0.0, 0.0, 0.0),
+        Point3::new(165.0, 165.0, 165.0),
         white.clone(),
-    ));
+    );
+    let block2 = Rotated::new(block2, Point3::new(0.0, 0.0, 0.0), Axis::Y, -18.0);
+    let block2 = Translated::new(block2, Vec3::new(130.0, 0.0, 65.0));
+    geometry.add(block2);
 
     let resolution = Resolution::with_aspect_ratio(1.0, 600);
     let cam = Camera::new(
