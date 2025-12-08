@@ -6,6 +6,8 @@ pub use camera::{Camera, Resolution};
 pub use renderer::Renderer;
 pub use world::World;
 
+use rand::random_range;
+
 use crate::objects::Hittable;
 use crate::prelude::*;
 
