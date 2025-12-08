@@ -88,7 +88,8 @@ impl Camera {
             + (i as f64 + offset.x) * self.pixel_delta_u
             + (j as f64 + offset.y) * self.pixel_delta_v;
         let defocus_disk_sample = self.sample_defocus_disk();
-        let time = random_unit_f64();
+        // Monte Carlo
+        let time = Randomizer::F2X.sample();
         Ray::with_time(
             defocus_disk_sample,
             pixel_sample - defocus_disk_sample,

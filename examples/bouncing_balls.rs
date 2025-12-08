@@ -8,7 +8,7 @@ use rust_raytracer::render::*;
 
 static SAMPLES_PER_PIXEL: i32 = 20;
 static MAX_DEPTH: i32 = 10;
-static N_BALLS: i32 = 50;
+static N_BALLS: i32 = 5;
 
 fn main() -> std::io::Result<()> {
     let renderer = Renderer::new(SAMPLES_PER_PIXEL, MAX_DEPTH);
