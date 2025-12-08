@@ -5,12 +5,12 @@ use rust_raytracer::materials::*;
 use rust_raytracer::objects::*;
 use rust_raytracer::render::*;
 
-static SAMPLES_PER_PIXEL: i32 = 20;
+static SAMPLES_PER_PIXEL: i32 = 40;
 static MAX_DEPTH: i32 = 10;
 
 fn main() -> std::io::Result<()> {
     let renderer = Renderer::new(SAMPLES_PER_PIXEL, MAX_DEPTH);
-    let file = get_output_file("rotation")?;
+    let file = get_output_file("motion_blur")?;
 
     let (world, camera) = motion_blur();
 
