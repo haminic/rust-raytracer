@@ -5,7 +5,7 @@ use rust_raytracer::materials::*;
 use rust_raytracer::objects::*;
 use rust_raytracer::render::*;
 
-static SAMPLES_PER_PIXEL: i32 = 5000;
+static SAMPLES_PER_PIXEL: i32 = 20;
 static MAX_DEPTH: i32 = 10;
 
 fn main() -> std::io::Result<()> {
@@ -31,7 +31,7 @@ pub fn pendulum() -> (World, Camera) {
     let mut geometry = HittableList::new();
 
     let red: Arc<dyn Material> = Arc::new(Lambertian::new(Color::new(0.65, 0.05, 0.05)));
-    let white: Arc<dyn Material> = Arc::new(Lambertian::new(Color::new(0.73, 0.73, 0.73)));
+    let white: Arc<dyn Material> = Arc::new(Lambertian::new(Color::new(0.0, 0.0, 0.0)));
     let green: Arc<dyn Material> = Arc::new(Lambertian::new(Color::new(0.12, 0.45, 0.15)));
     
     let light = Arc::new(DiffuseLight::new(Color::new(15.0, 15.0, 15.0)));
@@ -65,10 +65,10 @@ pub fn pendulum() -> (World, Camera) {
     let room_center_xz = 278.0;
     let ceiling_y = 555.0;
     let arm_length = 300.0;
-    let bob_radius = 50.0;
+    let sphere_radius = 50.0;
     
-    let bob_mat: Arc<dyn Material> = Arc::new(Metal::new(Color::new(0.9, 0.8, 0.2))); // Shiny bob
-    let arm_mat: Arc<dyn Material> = Arc::new(Metal::new(Color::new(0.3, 0.3, 0.3))); // Dark, thin arm
+    let sphere_mat: Arc<dyn Material> = Arc::new(Metal::new(Color::new(0.9, 0.8, 0.2)));
+    let arm_mat: Arc<dyn Material> = Arc::new(Metal::new(Color::new(0.3, 0.3, 0.3)));
     
     let pivot_center = Point3::new(room_center_xz, ceiling_y, 555.0);
 
@@ -91,18 +91,18 @@ pub fn pendulum() -> (World, Camera) {
     let arm_block = Block::new(arm_p0, arm_p1, arm_mat);
 
     // Pendulum Sphere
-    let bob_y_position = ceiling_y - arm_length - bob_radius;
-    let bob_center = Point3::new(room_center_xz, bob_y_position, pivot_center.z);
+    let sphere_y_position = ceiling_y - arm_length - sphere_radius;
+    let sphere_center = Point3::new(room_center_xz, sphere_y_position, pivot_center.z);
 
-    let bob_sphere = Sphere::new(bob_center, bob_radius, bob_mat);
+    let pendulum_sphere = Sphere::new(sphere_center, sphere_radius, sphere_mat);
 
     let mut pendulum = HittableList::new();
     pendulum.add(arm_block);
-    pendulum.add(bob_sphere);
+    pendulum.add(pendulum_sphere);
 
     // Rotating pendulum
-    let start_angle = -30.0; 
-    let end_angle = 30.0;
+    let start_angle = -15.0; 
+    let end_angle = 15.0;
 
     let rotating_pendulum = Rotating::new(
         pendulum,
