@@ -10,8 +10,10 @@ mod prelude;
 mod render;
 
 use std::fs;
+use std::io::{Error, ErrorKind::InvalidInput};
 use std::time::Instant;
-use std::io::{ErrorKind::InvalidInput, Error};
+
+use indicatif::ProgressStyle;
 
 use crate::examples::*;
 use crate::prelude::*;
@@ -39,11 +41,11 @@ fn main() -> std::io::Result<()> {
         }
     };
 
-    let start_time = Instant::now();
-    renderer.render(&camera, &world, file)?;
+    let style = ProgressStyle::with_template("[{elapsed_precise}] [{bar:40}] {percent:>3}%")
+        .unwrap()
+        .progress_chars("#>-");
 
-    let elapsed = start_time.elapsed().as_millis();
-    println!("Render time = {}.{} s", elapsed / 1000, elapsed % 1000);
+    renderer.multi_threaded_render(&camera, &world, file, style)?;
 
     Ok(())
 }

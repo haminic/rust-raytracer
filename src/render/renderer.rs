@@ -1,7 +1,7 @@
 use super::*;
 
-use rayon::prelude::*;
 use indicatif::{ProgressBar, ProgressStyle};
+use rayon::prelude::*;
 
 pub struct Renderer {
     samples_per_pixel: i32,
@@ -19,7 +19,13 @@ impl Renderer {
         }
     }
 
-    pub fn render(&self, camera: &Camera, world: &World, file: File) -> std::io::Result<()> {
+    pub fn multi_threaded_render(
+        &self,
+        camera: &Camera,
+        world: &World,
+        file: File,
+        style: ProgressStyle,
+    ) -> std::io::Result<()> {
         let mut writer = BufWriter::new(file);
         writeln!(writer, "P3")?;
         writeln!(
@@ -29,14 +35,9 @@ impl Renderer {
         )?;
         writeln!(writer, "255")?;
 
-        let pb = Arc::new(ProgressBar::new(
-            camera.resolution.width as u64 * camera.resolution.height as u64,
-        ));
-        pb.set_style(
-            ProgressStyle::with_template("[{elapsed_precise}] [{bar:40}] {percent:>3}%")
-                .unwrap()
-                .progress_chars("#>-"),
-        );
+        let total_pixels = camera.resolution.width * camera.resolution.height;
+        let pb = Arc::new(ProgressBar::new(total_pixels as u64));
+        pb.set_style(style);
 
         let pixel_colors: Vec<Color> = (0..camera.resolution.height)
             .into_par_iter()
@@ -48,9 +49,9 @@ impl Renderer {
                         let ray = camera.sample_ray(i, j);
                         pixel_color += ray_color(&ray, self.max_depth, world)
                     }
+                    pb.inc(1);
 
                     // Return the pixel color
-                    pb.inc(1);
                     self.pixel_samples_scale * pixel_color
                 })
             })
@@ -58,6 +59,45 @@ impl Renderer {
 
         for pixel_color in pixel_colors {
             write_color(&mut writer, pixel_color)?;
+        }
+
+        pb.finish();
+        println!("\nDone!");
+        Ok(())
+    }
+
+    pub fn single_threaded_render(
+        &self,
+        camera: &Camera,
+        world: &World,
+        file: File,
+        style: ProgressStyle,
+    ) -> std::io::Result<()> {
+        let mut writer = BufWriter::new(file);
+        writeln!(writer, "P3")?;
+        writeln!(
+            writer,
+            "{} {}",
+            camera.resolution.width, camera.resolution.height
+        )?;
+        writeln!(writer, "255")?;
+
+        let total_pixels = camera.resolution.width * camera.resolution.height;
+        let pb = ProgressBar::new(total_pixels as u64);
+        pb.set_style(style);
+
+        for j in 0..camera.resolution.height {
+            for i in 0..camera.resolution.width {
+                let mut pixel_color = Color::new(0.0, 0.0, 0.0);
+                for _ in 0..self.samples_per_pixel {
+                    let ray = camera.sample_ray(i, j);
+                    pixel_color += ray_color(&ray, self.max_depth, world);
+                }
+
+                let scaled_color = self.pixel_samples_scale * pixel_color;
+                write_color(&mut writer, scaled_color)?;
+                pb.inc(1);
+            }
         }
 
         pb.finish();
