@@ -58,8 +58,11 @@ impl Vec3 {
         )
     }
 
-    // Normal Distribution for random vector
-    pub fn random_normal_unit() -> Self {
+    /*
+        Random x,y,z by Standard Normal Distribution
+        The result unit vector on disk will be in Standard Uniform Distribution
+    */
+    pub fn random_unit_vector() -> Self {
         Self::new(
             random_normal_f64(),
             random_normal_f64(),
@@ -69,7 +72,7 @@ impl Vec3 {
     }
 
     pub fn random_on_hemisphere(normal: Self) -> Self {
-        let on_unit_sphere = Self::random_normal_unit();
+        let on_unit_sphere = Self::random_unit_vector();
         if on_unit_sphere.dot(normal) > 0.0 {
             on_unit_sphere
         } else {

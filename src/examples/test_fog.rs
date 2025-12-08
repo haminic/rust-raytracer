@@ -13,8 +13,8 @@ pub fn test_fog() -> (World, Camera){
     world.add(Sphere::new(Point3::new(3.0,1.0,-2.0), 1.5, difflight));
 
     let border: Arc<dyn Material> = Arc::new(Dielectric::new(1.5));
-    let boundary: Sphere = Sphere::new(Point3::new(3.0, 1.5, 1.0), 1.0, border);
-    world.add(ConstantMedium::new(boundary, 0.2, Color::new(0.73, 0.73, 0.73)));
+    let boundary: Sphere = Sphere::new(Point3::new(3.0, 1.5, 0.8), 1.8, border);
+    world.add(ConstantMedium::new(boundary, 0.8, Color::new(0.2, 0.4, 0.8)));
 
     let resolution = Resolution::with_aspect_ratio(16.0 / 9.0, 1200);
     let cam = Camera::new(
@@ -27,5 +27,5 @@ pub fn test_fog() -> (World, Camera){
         0.0,
     );
 
-    (World::new(Color::new(0.0, 0.20, 0.5)*0.3, Box::new(world)), cam)
+    (World::new(Color::new(0.20, 0.20, 0.20)*0.3, Box::new(world)), cam)
 }
