@@ -10,9 +10,9 @@ static MAX_DEPTH: i32 = 30;
 
 fn main() -> std::io::Result<()> {
     let renderer = Renderer::new(SAMPLES_PER_PIXEL, MAX_DEPTH);
-    let file = get_output_file("balls_jumping")?;
+    let file = get_output_file("spining_balls")?;
 
-    let (world, camera) = test_fog();
+    let (world, camera) = spining_balls();
 
     renderer.multi_threaded_render(&camera, &world, file, None)?;
 
@@ -30,7 +30,7 @@ fn get_output_file(name: &str) -> std::io::Result<std::fs::File> {
 static FOG: bool = true;
 static ROTATE: bool = true;
 
-pub fn test_fog() -> (World, Camera) {
+pub fn spining_balls() -> (World, Camera) {
     let mut geometry = HittableList::new();
     let mut moving = HittableList::new();
 
