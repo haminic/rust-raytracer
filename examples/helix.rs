@@ -30,28 +30,43 @@ fn get_output_file(name: &str) -> std::io::Result<std::fs::File> {
 pub fn helix() -> (World, Camera) {
     let mut geometry = HittableList::new();
 
-    let red: Arc<dyn Material> = Arc::new(Lambertian::new(Color::new(0.65, 0.05, 0.05)));
-    let white: Arc<dyn Material> = Arc::new(Lambertian::new(Color::new(0.73, 0.73, 0.73)));
-    let green: Arc<dyn Material> = Arc::new(Lambertian::new(Color::new(0.12, 0.45, 0.15)));
-    
-    let light = Arc::new(DiffuseLight::new(Color::new(15.0, 15.0, 15.0)));
-    
+    let red: Arc<dyn Material> = Lambertian::new(Color::new(0.65, 0.05, 0.05));
+    let white: Arc<dyn Material> = Lambertian::new(Color::new(0.73, 0.73, 0.73));
+    let green: Arc<dyn Material> = Lambertian::new(Color::new(0.12, 0.45, 0.15));
+
+    let light = DiffuseLight::new(Color::new(15.0, 15.0, 15.0));
+
     geometry.add(Quad::new(
-        Point3::new(555.0, 0.0, 0.0), Vec3::new(0.0, 555.0, 0.0), Vec3::new(0.0, 0.0, 555.0), green, // Right Wall
+        Point3::new(555.0, 0.0, 0.0),
+        Vec3::new(0.0, 555.0, 0.0),
+        Vec3::new(0.0, 0.0, 555.0),
+        green, // Right Wall
     ));
     geometry.add(Quad::new(
-        Point3::new(0.0, 0.0, 0.0), Vec3::new(0.0, 555.0, 0.0), Vec3::new(0.0, 0.0, 555.0), red,   // Left Wall
+        Point3::new(0.0, 0.0, 0.0),
+        Vec3::new(0.0, 555.0, 0.0),
+        Vec3::new(0.0, 0.0, 555.0),
+        red, // Left Wall
     ));
     geometry.add(Quad::new(
-        Point3::new(0.0, 0.0, 0.0), Vec3::new(555.0, 0.0, 0.0), Vec3::new(0.0, 0.0, 555.0), white.clone(), // Floor
+        Point3::new(0.0, 0.0, 0.0),
+        Vec3::new(555.0, 0.0, 0.0),
+        Vec3::new(0.0, 0.0, 555.0),
+        white.clone(), // Floor
     ));
     geometry.add(Quad::new(
-        Point3::new(555.0, 555.0, 555.0), Vec3::new(-555.0, 0.0, 0.0), Vec3::new(0.0, 0.0, -555.0), white.clone(), // Ceiling
+        Point3::new(555.0, 555.0, 555.0),
+        Vec3::new(-555.0, 0.0, 0.0),
+        Vec3::new(0.0, 0.0, -555.0),
+        white.clone(), // Ceiling
     ));
     geometry.add(Quad::new(
-        Point3::new(0.0, 0.0, 555.0), Vec3::new(555.0, 0.0, 0.0), Vec3::new(0.0, 555.0, 0.0), white.clone(), // Back Wall
+        Point3::new(0.0, 0.0, 555.0),
+        Vec3::new(555.0, 0.0, 0.0),
+        Vec3::new(0.0, 555.0, 0.0),
+        white.clone(), // Back Wall
     ));
-    
+
     // Light Source
     geometry.add(Quad::new(
         Point3::new(343.0, 554.0, 332.0),
@@ -59,26 +74,24 @@ pub fn helix() -> (World, Camera) {
         Vec3::new(0.0, 0.0, -105.0),
         light,
     ));
-    
+
     // Helix Sphere
     let radius = 50.0;
     let room_center_x = 278.0;
     let room_center_z = 278.0;
-    
-    let box_center = Point3::new(room_center_x, radius, room_center_z); 
-    let sphere_pos = Point3::new(room_center_x, radius, room_center_z + 200.0); 
-    
-    let mat: Arc<dyn Material> = Arc::new(Metal::new(Color::new(0.0, 0.0, 0.0)));
-    let helix_sphere = Translating::new(Rotating::new(Sphere::new(
-        sphere_pos,
-        radius, 
-        mat
-    ),
-        box_center.clone(),
-        Axis::Y,
-        90.0,
-        -90.0,
-    ),
+
+    let box_center = Point3::new(room_center_x, radius, room_center_z);
+    let sphere_pos = Point3::new(room_center_x, radius, room_center_z + 200.0);
+
+    let mat: Arc<dyn Material> = Metal::new(Color::new(0.0, 0.0, 0.0));
+    let helix_sphere = Translating::new(
+        Rotating::new(
+            Sphere::new(sphere_pos, radius, mat),
+            box_center.clone(),
+            Axis::Y,
+            90.0,
+            -90.0,
+        ),
         Vec3::new(0.0, 0.0, 0.0),
         Vec3::new(0.0, 200.0, 0.0),
     );
@@ -96,5 +109,5 @@ pub fn helix() -> (World, Camera) {
         0.0,
     );
 
-    (World::new(Color::new(0.0, 0.0, 0.0), geometry), cam)    
+    (World::new(Color::new(0.0, 0.0, 0.0), geometry), cam)
 }

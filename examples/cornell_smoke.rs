@@ -30,11 +30,11 @@ fn get_output_file(name: &str) -> std::io::Result<std::fs::File> {
 pub fn cornell_smoke() -> (World, Camera) {
     let mut world = HittableList::new();
 
-    let red: Arc<dyn Material> = Arc::new(Lambertian::new(Color::new(0.65, 0.05, 0.05)));
-    let white: Arc<dyn Material> = Arc::new(Lambertian::new(Color::new(0.73, 0.73, 0.73)));
-    let green: Arc<dyn Material> = Arc::new(Lambertian::new(Color::new(0.12, 0.45, 0.15)));
+    let red: Arc<dyn Material> = Lambertian::new(Color::new(0.65, 0.05, 0.05));
+    let white: Arc<dyn Material> = Lambertian::new(Color::new(0.73, 0.73, 0.73));
+    let green: Arc<dyn Material> = Lambertian::new(Color::new(0.12, 0.45, 0.15));
 
-    let light = Arc::new(DiffuseLight::new(Color::new(7.0, 7.0, 7.0)));
+    let light = DiffuseLight::new(Color::new(7.0, 7.0, 7.0));
 
     world.add(Quad::new(
         Point3::new(555.0, 0.0, 0.0),

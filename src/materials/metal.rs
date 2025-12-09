@@ -12,15 +12,15 @@ impl Metal {
     pub const GOLD_ALBEDO: Color = Color::new(255.0 / 256.0, 226.0 / 256.0, 155.0 / 256.0);
     pub const CHROME_ALBEDO: Color = Color::new(196.0 / 255.0, 197.0 / 255.0, 197.0 / 255.0);
 
-    pub const fn new(albedo: Color) -> Self {
-        Self { albedo, fuzz: 0.0 }
+    pub fn new(albedo: Color) -> Arc<dyn Material> {
+        Arc::new(Self { albedo, fuzz: 0.0 })
     }
 
-    pub const fn with_fuzz(albedo: Color, fuzz: f64) -> Self {
-        Self {
+    pub fn with_fuzz(albedo: Color, fuzz: f64) -> Arc<dyn Material> {
+        Arc::new(Self {
             albedo,
             fuzz: (Interval::UNIT.clamp(fuzz)),
-        }
+        })
     }
 }
 

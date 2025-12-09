@@ -30,7 +30,7 @@ fn get_output_file(name: &str) -> std::io::Result<std::fs::File> {
 pub fn traffic_light() -> (World, Camera) {
     let mut geometry = HittableList::new();
 
-    let white_material = Arc::new(Lambertian::new(Color::new(0.9, 0.9, 0.9)));
+    let white_material = Lambertian::new(Color::new(0.9, 0.9, 0.9));
     geometry.add(Quad::new(
         Point3::new(-1000.0, 0.0, -1000.0),
         Vec3::new(2000.0, 0.0, 0.0),
@@ -57,15 +57,9 @@ pub fn traffic_light() -> (World, Camera) {
 
     let light_intensity: f64 = 100.0;
     let others = 0.01;
-    let red_light = Arc::new(DiffuseLight::new(
-        Color::new(1.0, others, others) * light_intensity,
-    ));
-    let green_light = Arc::new(DiffuseLight::new(
-        Color::new(others, 1.0, others) * light_intensity,
-    ));
-    let blue_light = Arc::new(DiffuseLight::new(
-        Color::new(others, others, 1.0) * light_intensity,
-    ));
+    let red_light = DiffuseLight::new(Color::new(1.0, others, others) * light_intensity);
+    let green_light = DiffuseLight::new(Color::new(others, 1.0, others) * light_intensity);
+    let blue_light = DiffuseLight::new(Color::new(others, others, 1.0) * light_intensity);
 
     let red_ball = Sphere::new(Point3::new(-5.0, 1.0, 7.0), 1.0, red_light.clone());
     let green_ball = Sphere::new(Point3::new(0.0, 1.0, 8.0), 1.0, green_light.clone());

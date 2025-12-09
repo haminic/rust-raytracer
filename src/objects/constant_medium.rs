@@ -15,7 +15,7 @@ impl ConstantMedium {
     pub fn new(boundary: impl Hittable + 'static, density: f64, albedo: Color) -> Self {
         Self {
             neg_inv_density: (-1.0 / density),
-            phase_function: Arc::new(Isotropic::new(albedo)),
+            phase_function: Isotropic::new(albedo),
             bbox: boundary.bounding_box(),
             boundary: Box::new(boundary),
         }

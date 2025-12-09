@@ -30,11 +30,11 @@ fn get_output_file(name: &str) -> std::io::Result<std::fs::File> {
 pub fn cornell_box() -> (World, Camera) {
     let mut geometry = HittableList::new();
 
-    let red: Arc<dyn Material> = Arc::new(Lambertian::new(Color::new(0.65, 0.05, 0.05)));
-    let white: Arc<dyn Material> = Arc::new(Lambertian::new(Color::new(0.73, 0.73, 0.73)));
-    let green: Arc<dyn Material> = Arc::new(Lambertian::new(Color::new(0.12, 0.45, 0.15)));
+    let red: Arc<dyn Material> = Lambertian::new(Color::new(0.65, 0.05, 0.05));
+    let white: Arc<dyn Material> = Lambertian::new(Color::new(0.73, 0.73, 0.73));
+    let green: Arc<dyn Material> = Lambertian::new(Color::new(0.12, 0.45, 0.15));
 
-    let light = Arc::new(DiffuseLight::new(Color::new(15.0, 15.0, 15.0)));
+    let light = DiffuseLight::new(Color::new(15.0, 15.0, 15.0));
 
     geometry.add(Quad::new(
         Point3::new(555.0, 0.0, 0.0),

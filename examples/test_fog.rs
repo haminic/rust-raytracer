@@ -30,21 +30,20 @@ fn get_output_file(name: &str) -> std::io::Result<std::fs::File> {
 pub fn test_fog() -> (World, Camera) {
     let mut geometry = HittableList::new();
 
-    let ground_material: Arc<dyn Material> = Arc::new(Lambertian::new(Color::new(0.5, 0.5, 0.5)));
+    let ground_material: Arc<dyn Material> = Lambertian::new(Color::new(0.5, 0.5, 0.5));
     geometry.add(Sphere::new(
         Point3::new(0.0, -1000.0, 0.0),
         1000.0,
         ground_material,
     ));
 
-    let material1: Arc<dyn Material> = Arc::new(Lambertian::new(Color::new(0.2, 0.60, 0.2)));
+    let material1: Arc<dyn Material> = Lambertian::new(Color::new(0.2, 0.60, 0.2));
     geometry.add(Sphere::new(Point3::new(0.0, 2.0, 0.0), 2.0, material1));
 
-    let difflight: Arc<dyn Material> =
-        Arc::new(DiffuseLight::new(Color::new(0.73, 0.73, 0.73) * 2.0));
+    let difflight: Arc<dyn Material> = DiffuseLight::new(Color::new(0.73, 0.73, 0.73) * 2.0);
     geometry.add(Sphere::new(Point3::new(3.0, 1.0, -2.0), 1.5, difflight));
 
-    let border: Arc<dyn Material> = Arc::new(Dielectric::new(1.5));
+    let border: Arc<dyn Material> = Dielectric::new(1.5);
     let boundary: Sphere = Sphere::new(Point3::new(3.0, 1.5, 0.8), 1.8, border);
     geometry.add(ConstantMedium::new(
         boundary,
