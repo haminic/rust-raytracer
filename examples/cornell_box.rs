@@ -5,8 +5,8 @@ use rust_raytracer::materials::*;
 use rust_raytracer::objects::*;
 use rust_raytracer::render::*;
 
-static SAMPLES_PER_PIXEL: i32 = 20;
-static MAX_DEPTH: i32 = 10;
+static SAMPLES_PER_PIXEL: i32 = 1000;
+static MAX_DEPTH: i32 = 50;
 
 fn main() -> std::io::Result<()> {
     let renderer = Renderer::new(SAMPLES_PER_PIXEL, MAX_DEPTH);

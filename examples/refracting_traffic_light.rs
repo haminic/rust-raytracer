@@ -5,12 +5,12 @@ use rust_raytracer::materials::*;
 use rust_raytracer::objects::*;
 use rust_raytracer::render::*;
 
-static SAMPLES_PER_PIXEL: i32 = 100;
-static MAX_DEPTH: i32 = 10;
+static SAMPLES_PER_PIXEL: i32 = 1000;
+static MAX_DEPTH: i32 = 20;
 
 fn main() -> std::io::Result<()> {
     let renderer = Renderer::new(SAMPLES_PER_PIXEL, MAX_DEPTH);
-    let file = get_output_file("spining_balls")?;
+    let file = get_output_file("refracting_traffic_light")?;
 
     let (world, camera) = traffic_light();
 
