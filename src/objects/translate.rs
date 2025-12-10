@@ -1,24 +1,24 @@
 use crate::objects::{Aabb, Hit, Hittable};
 use crate::prelude::*;
 
-pub struct Translated {
-    object: Box<dyn Hittable>,
+pub struct Translated<T> {
+    object: T,
     offset: Vec3,
     bbox: Aabb,
 }
 
-impl Translated {
-    pub fn new(object: impl Hittable + 'static, offset: Vec3) -> Self {
+impl<T: Hittable> Translated<T> {
+    pub fn new(object: T, offset: Vec3) -> Self {
         let bbox = object.bounding_box() + offset;
         Self {
-            object: Box::new(object),
+            object,
             offset,
             bbox,
         }
     }
 }
 
-impl Hittable for Translated {
+impl<T: Hittable> Hittable for Translated<T> {
     fn hit(&self, ray: &Ray, t_range: Interval) -> Option<Hit> {
         let translated_ray = Ray::with_time(ray.origin - self.offset, ray.direction, ray.time);
         self.object.hit(&translated_ray, t_range).map(|mut hit| {
@@ -32,26 +32,26 @@ impl Hittable for Translated {
     }
 }
 
-pub struct Translating {
-    object: Box<dyn Hittable>,
+pub struct Translating<T> {
+    object: T,
     offset: Lerp<Vec3>,
     bbox: Aabb,
 }
 
-impl Translating {
+impl<T: Hittable> Translating<T> {
     // Moves object from from offset1 to offset2 within shutter time
-    pub fn new(object: impl Hittable + 'static, offset1: Vec3, offset2: Vec3) -> Self {
+    pub fn new(object: T, offset1: Vec3, offset2: Vec3) -> Self {
         let bbox1 = object.bounding_box() + offset1;
         let bbox2 = object.bounding_box() + offset2;
         Self {
-            object: Box::new(object),
+            object,
             offset: Lerp::new(offset1, offset2),
             bbox: Aabb::enclosing(bbox1, bbox2),
         }
     }
 }
 
-impl Hittable for Translating {
+impl<T: Hittable> Hittable for Translating<T> {
     fn hit(&self, ray: &Ray, t_range: Interval) -> Option<Hit> {
         let offset = self.offset.at(ray.time);
         let translated_ray = Ray::with_time(ray.origin - offset, ray.direction, ray.time);

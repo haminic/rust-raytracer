@@ -4,25 +4,25 @@ use crate::prelude::*;
 
 static EPSILON: f64 = 0.0001;
 
-pub struct ConstantMedium {
-    boundary: Box<dyn Hittable>,
+pub struct ConstantMedium<T> {
+    boundary: T,
     neg_inv_density: f64,
     phase_function: Arc<dyn Material>,
     bbox: Aabb,
 }
 
-impl ConstantMedium {
-    pub fn new(boundary: impl Hittable + 'static, density: f64, albedo: Color) -> Self {
+impl<T: Hittable> ConstantMedium<T> {
+    pub fn new(boundary: T, density: f64, albedo: Color) -> Self {
         Self {
             neg_inv_density: (-1.0 / density),
             phase_function: Isotropic::new(albedo),
             bbox: boundary.bounding_box(),
-            boundary: Box::new(boundary),
+            boundary,
         }
     }
 }
 
-impl Hittable for ConstantMedium {
+impl<T: Hittable> Hittable for ConstantMedium<T> {
     fn hit(&self, ray: &Ray, t_range: Interval) -> Option<Hit> {
         let Some(mut hit1) = self.boundary.hit(ray, Interval::UNIVERSE) else {
             return None;

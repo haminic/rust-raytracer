@@ -10,7 +10,7 @@ pub fn to_hittable(object: impl Hittable + 'static) -> Box<dyn Hittable> {
     Box::new(object)
 }
 
-impl Hittable for Box<dyn Hittable> {
+impl<T: Hittable + ?Sized> Hittable for Box<T> {
     fn hit(&self, ray: &Ray, t_range: Interval) -> Option<Hit> {
         (**self).hit(&ray, t_range)
     }
