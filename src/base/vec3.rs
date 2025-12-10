@@ -1,9 +1,9 @@
+use rand::random_range;
 use rand_distr::uniform::SampleRange;
 use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Sub, SubAssign};
-use rand::random_range;
 
 use crate::base::Axis;
-use crate::prelude::{random_normal_f64};
+use crate::prelude::random_normal_f64;
 
 #[derive(Clone, Copy, Debug)]
 pub struct Vec3 {

@@ -1,8 +1,8 @@
 use crate::objects::{Aabb, Hit, Hittable};
 use crate::prelude::*;
 
-pub struct Rotated {
-    object: Box<dyn Hittable>,
+pub struct Rotated<T> {
+    object: T,
     axis: Axis,
     pivot: Point3,
     sin_theta: f64,
@@ -10,8 +10,8 @@ pub struct Rotated {
     bbox: Aabb,
 }
 
-impl Rotated {
-    pub fn new(object: impl Hittable + 'static, pivot: Point3, axis: Axis, degrees: f64) -> Self {
+impl<T: Hittable> Rotated<T> {
+    pub fn new(object: T, pivot: Point3, axis: Axis, degrees: f64) -> Self {
         let theta = degrees.to_radians();
         let sin_theta = theta.sin();
         let cos_theta = theta.cos();
@@ -35,7 +35,7 @@ impl Rotated {
         }
 
         Self {
-            object: Box::new(object),
+            object,
             pivot,
             axis,
             sin_theta,
@@ -45,7 +45,7 @@ impl Rotated {
     }
 }
 
-impl Hittable for Rotated {
+impl<T: Hittable> Hittable for Rotated<T> {
     fn hit(&self, ray: &Ray, t_range: Interval) -> Option<Hit> {
         let reference_point = ray.at(1.0);
         let rotated_origin = get_rotated(
@@ -93,22 +93,16 @@ impl Hittable for Rotated {
     }
 }
 
-pub struct Rotating {
-    object: Box<dyn Hittable>,
+pub struct Rotating<T> {
+    object: T,
     axis: Axis,
     pivot: Point3,
     angle: Lerp<f64>,
     bbox: Aabb,
 }
 
-impl Rotating {
-    pub fn new(
-        object: impl Hittable + 'static,
-        pivot: Point3,
-        axis: Axis,
-        degrees1: f64,
-        degrees2: f64,
-    ) -> Self {
+impl<T: Hittable> Rotating<T> {
+    pub fn new(object: T, pivot: Point3, axis: Axis, degrees1: f64, degrees2: f64) -> Self {
         let theta1 = degrees1.to_radians();
         let theta2 = degrees2.to_radians();
         let bbox = object.bounding_box();
@@ -132,7 +126,7 @@ impl Rotating {
         }
 
         Self {
-            object: Box::new(object),
+            object,
             pivot,
             axis,
             angle: Lerp::new(theta1, theta2),
@@ -141,7 +135,7 @@ impl Rotating {
     }
 }
 
-impl Hittable for Rotating {
+impl<T: Hittable> Hittable for Rotating<T> {
     fn hit(&self, ray: &Ray, t_range: Interval) -> Option<Hit> {
         let theta = self.angle.at(ray.time);
         let sin_theta = theta.sin();

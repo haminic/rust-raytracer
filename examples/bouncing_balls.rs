@@ -42,7 +42,7 @@ fn get_output_file(name: &str) -> std::io::Result<std::fs::File> {
 pub fn bouncing_balls(n: i32, bvh: bool) -> (World, Camera) {
     let mut geometry = HittableList::new();
 
-    let ground_material: Arc<dyn Material> = Arc::new(Lambertian::new(Color::new(0.5, 0.5, 0.5)));
+    let ground_material: Arc<dyn Material> = Lambertian::new(Color::new(0.5, 0.5, 0.5));
     geometry.add(Sphere::new(
         Point3::new(0.0, -1000.0, 0.0),
         1000.0,
@@ -64,13 +64,13 @@ pub fn bouncing_balls(n: i32, bvh: bool) -> (World, Camera) {
                 let sphere_material: Arc<dyn Material> = match choose_mat {
                     x if x < 0.5 => {
                         let albedo = Color::random(0.0..1.0) * Color::random(0.0..1.0);
-                        Arc::new(Lambertian::new(albedo))
+                        Lambertian::new(albedo)
                     }
                     x if x < 0.8 => {
                         let albedo = Color::random(0.0..1.0) * Color::random(0.0..1.0);
-                        Arc::new(Metal::new(albedo))
+                        Metal::new(albedo)
                     }
-                    _ => Arc::new(Dielectric::new(1.5)),
+                    _ => Dielectric::new(1.5),
                 };
                 let sphere = Sphere::new(center, 0.2, sphere_material);
                 if choose_bounce > 0.5 {
@@ -86,13 +86,13 @@ pub fn bouncing_balls(n: i32, bvh: bool) -> (World, Camera) {
         }
     }
 
-    let material1 = Arc::new(Dielectric::new(1.5));
+    let material1 = Dielectric::new(1.5);
     geometry.add(Sphere::new(Point3::new(0.0, 1.0, 0.0), 1.0, material1));
 
-    let material2 = Arc::new(Lambertian::new(Color::new(0.4, 0.2, 0.1)));
+    let material2 = Lambertian::new(Color::new(0.4, 0.2, 0.1));
     geometry.add(Sphere::new(Point3::new(2.0, 1.0, -2.5), 1.0, material2));
 
-    let material3 = Arc::new(Metal::new(Metal::GOLD_ALBEDO));
+    let material3 = Metal::new(Metal::GOLD_ALBEDO);
     geometry.add(Sphere::new(Point3::new(-4.0, 1.0, 0.0), 1.0, material3));
 
     let resolution = Resolution::with_aspect_ratio(16.0 / 9.0, 1200);
@@ -108,12 +108,11 @@ pub fn bouncing_balls(n: i32, bvh: bool) -> (World, Camera) {
 
     let backdrop_color = Color::new(0.70, 0.80, 1.00);
 
-    (
-        if bvh {
-            World::new(backdrop_color, Bvh::from_list(geometry))
-        } else {
-            World::new(backdrop_color, geometry)
-        },
-        cam,
-    )
+    let geometry = if bvh {
+        to_hittable(Bvh::from_list(geometry))
+    } else {
+        to_hittable(geometry)
+    };
+
+    (World::new(backdrop_color, geometry), cam)
 }

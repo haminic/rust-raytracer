@@ -6,8 +6,8 @@ pub struct DiffuseLight {
 }
 
 impl DiffuseLight {
-    pub fn new(emit: Color) -> Self {
-        DiffuseLight { color: emit }
+    pub fn new(emit: Color) -> Arc<dyn Material> {
+        Arc::new(DiffuseLight { color: emit })
     }
 }
 

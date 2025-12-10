@@ -4,4 +4,4 @@ mod hittable;
 
 pub use aabb::Aabb;
 pub use hit::Hit;
-pub use hittable::Hittable;
+pub use hittable::{Hittable, to_hittable};

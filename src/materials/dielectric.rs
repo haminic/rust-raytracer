@@ -7,8 +7,8 @@ pub struct Dielectric {
 }
 
 impl Dielectric {
-    pub fn new(ior_ratio: f64) -> Self {
-        Self { ior_ratio }
+    pub fn new(ior_ratio: f64) -> Arc<dyn Material> {
+        Arc::new(Self { ior_ratio })
     }
 }
 

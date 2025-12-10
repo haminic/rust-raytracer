@@ -30,31 +30,31 @@ fn get_output_file(name: &str) -> std::io::Result<std::fs::File> {
 pub fn motion_blur() -> (World, Camera) {
     let mut geometry = HittableList::new();
 
-    let white = Arc::new(Lambertian::new(Color::new(0.73, 0.73, 0.73)));
-    let green = Arc::new(Lambertian::new(Color::new(0.12, 0.45, 0.15)));
-    let yellow = Arc::new(Lambertian::new(Color::new(0.9, 0.824, 0.114)));
-    let blue = Arc::new(Lambertian::new(Color::new(0.118, 0.196, 0.922)));
-    let red: Arc<dyn Material> = Arc::new(Lambertian::new(Color::new(0.65, 0.05, 0.05)));
+    let white = Lambertian::new(Color::new(0.73, 0.73, 0.73));
+    let green = Lambertian::new(Color::new(0.12, 0.45, 0.15));
+    let yellow = Lambertian::new(Color::new(0.9, 0.824, 0.114));
+    let blue = Lambertian::new(Color::new(0.118, 0.196, 0.922));
+    let red = Lambertian::new(Color::new(0.65, 0.05, 0.05));
 
-    let light = Arc::new(DiffuseLight::new(Color::new(15.0, 15.0, 15.0)));
+    let light = DiffuseLight::new(Color::new(15.0, 15.0, 15.0));
 
     geometry.add(Quad::new(
         Point3::new(555.0, 0.0, 0.0),
         Vec3::new(0.0, 555.0, 0.0),
         Vec3::new(0.0, 0.0, 555.0),
-        blue,
+        blue.clone(),
     ));
     geometry.add(Quad::new(
         Point3::new(0.0, 0.0, 0.0),
         Vec3::new(0.0, 555.0, 0.0),
         Vec3::new(0.0, 0.0, 555.0),
-        yellow,
+        yellow.clone(),
     ));
     geometry.add(Quad::new(
         Point3::new(343.0, 554.0, 332.0),
         Vec3::new(-130.0, 0.0, 0.0),
         Vec3::new(0.0, 0.0, -105.0),
-        light,
+        light.clone(),
     ));
     geometry.add(Quad::new(
         Point3::new(0.0, 0.0, 0.0),
