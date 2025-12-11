@@ -1,4 +1,4 @@
-use std::ops::Add;
+use std::ops::{Add, Mul, Sub};
 
 use crate::prelude::*;
 
@@ -97,5 +97,33 @@ impl Add<Aabb> for Vec3 {
     type Output = Aabb;
     fn add(self, rhs: Aabb) -> Self::Output {
         Aabb::new(rhs.x + self.x, rhs.y + self.y, rhs.z + self.z)
+    }
+}
+
+impl Sub<Vec3> for Aabb {
+    type Output = Aabb;
+    fn sub(self, rhs: Vec3) -> Self::Output {
+        self + (-rhs)
+    }
+}
+
+impl Sub<Aabb> for Vec3 {
+    type Output = Aabb;
+    fn sub(self, rhs: Aabb) -> Self::Output {
+        rhs + (-self)
+    }
+}
+
+impl Mul<Vec3> for Aabb {
+    type Output = Aabb;
+    fn mul(self, rhs: Vec3) -> Self::Output {
+        Aabb::new(self.x * rhs.x, self.y * rhs.y, self.z * rhs.z)
+    }
+}
+
+impl Mul<Aabb> for Vec3 {
+    type Output = Aabb;
+    fn mul(self, rhs: Aabb) -> Self::Output {
+        rhs * self
     }
 }

@@ -1,6 +1,6 @@
 use crate::prelude::INFINITY;
 
-use std::ops::Add;
+use std::ops::{Add, Mul};
 
 #[derive(Clone, Copy)]
 pub struct Interval {
@@ -62,5 +62,12 @@ impl Add<Interval> for f64 {
     type Output = Interval;
     fn add(self, rhs: Interval) -> Self::Output {
         Interval::new(rhs.min + self, rhs.max + self)
+    }
+}
+
+impl Mul<f64> for Interval {
+    type Output = Interval;
+    fn mul(self, rhs: f64) -> Self::Output {
+        Interval::new(self.min * rhs, self.max * rhs)
     }
 }

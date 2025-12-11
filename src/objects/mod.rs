@@ -8,6 +8,8 @@ mod quad;
 mod rotate;
 mod sphere;
 mod translate;
+mod scale;
+mod matrix;
 
 pub use base::*;
 pub use block::Block;
@@ -19,3 +21,5 @@ pub use quad::Quad;
 pub use rotate::{Rotated, Rotating};
 pub use sphere::Sphere;
 pub use translate::{Translated, Translating};
+pub use scale::{Scaled, Scaling};
+pub use matrix::{Transformed, Transforming};
