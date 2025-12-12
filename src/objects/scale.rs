@@ -9,7 +9,7 @@ pub struct Scaled<T> {
 }
 
 impl<T: Hittable> Scaled<T> {
-    pub fn new(object: T, scale: Vec3, center: Point3) -> Self {
+    pub fn new(object: T, center: Point3, scale: Vec3) -> Self {
         let bbox = scale * (object.bounding_box() - center) + center;
         Self {
             object,
@@ -43,7 +43,7 @@ pub struct Scaling<T> {
 }
 
 impl<T: Hittable> Scaling<T> {
-    pub fn new(object: T, scale1: Vec3, scale2: Vec3, center: Vec3) -> Self {
+    pub fn new(object: T, center: Vec3, scale1: Vec3, scale2: Vec3) -> Self {
         let bbox1 = scale1 * (object.bounding_box() - center) + center;
         let bbox2 = scale2 * (object.bounding_box() - center) + center;
         Self {

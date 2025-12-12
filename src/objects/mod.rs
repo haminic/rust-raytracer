@@ -9,7 +9,7 @@ mod rotate;
 mod sphere;
 mod translate;
 mod scale;
-mod matrix;
+mod transform;
 
 pub use base::*;
 pub use block::Block;
@@ -22,4 +22,4 @@ pub use rotate::{Rotated, Rotating};
 pub use sphere::Sphere;
 pub use translate::{Translated, Translating};
 pub use scale::{Scaled, Scaling};
-pub use matrix::{Transformed, Transforming};
+pub use transform::{Transformed, Transforming};

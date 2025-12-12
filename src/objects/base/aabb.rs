@@ -127,3 +127,13 @@ impl Mul<Aabb> for Vec3 {
         rhs * self
     }
 }
+
+impl Mul<Aabb> for &Mat3 {
+    type Output = Aabb;
+    fn mul(self, rhs: Aabb) -> Self::Output {
+        let min_pos = self * Vec3::new(rhs.x.min, rhs.y.min, rhs.z.min);
+        let max_pos = self * Vec3::new(rhs.x.max, rhs.y.max, rhs.z.max);
+
+        Aabb::new(Interval::new(min_pos.x, max_pos.x), Interval::new(min_pos.y, max_pos.y), Interval::new(min_pos.z, max_pos.z))
+    }
+}

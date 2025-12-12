@@ -5,7 +5,7 @@ use rust_raytracer::materials::*;
 use rust_raytracer::objects::*;
 use rust_raytracer::render::*;
 
-static SAMPLES_PER_PIXEL: i32 = 10;
+static SAMPLES_PER_PIXEL: i32 = 100;
 static MAX_DEPTH: i32 = 5;
 
 fn main() -> std::io::Result<()> {
@@ -92,10 +92,15 @@ pub fn cornell_box() -> (World, Camera) {
     // let block2 = Scaling::new(block2, Vec3::new(1.0, 1.0, 1.0), Vec3::new(1.0, 2.0, 1.0),Vec3::new(278.0, 278.0, 0.0));
     // geometry.add(block2);
 
-    let mat = Metal::with_fuzz(Vec3::new(0.8, 0.6, 0.7), 0.5);
-    let sphere = Sphere::new(Vec3::new(278.0, 278.0, 0.0), 50.0, mat);
-    let sphere = Scaled::new(sphere, Vec3::new(2.0, 1.0, 1.0), Vec3::new(278.0, 278.0, 0.0));
-    let sphere = Rotated::new(sphere, Vec3::new(0.0, 0.0, 0.0), Axis::Y, 15.0);
+    let mat = Metal::with_fuzz(Vec3::new(0.8, 0.6, 0.7), 1.0);
+    let sphere = Sphere::new(Vec3::new(0.0, 0.0, 0.0), 50.0, mat);
+    let transform = Mat3::new([
+        [2.0, 0.0, 0.0],
+        [0.0, 1.0, 0.0],
+        [0.0, 0.0, 1.0],
+    ]);
+    let sphere = Transformed::new(sphere, transform).unwrap();
+    let sphere = Translated::new(sphere, Vec3::new(278.0, 278.0, 400.0));
 
     geometry.add(sphere);
 
