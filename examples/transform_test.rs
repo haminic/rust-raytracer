@@ -3,11 +3,11 @@ use rust_raytracer::materials::*;
 use rust_raytracer::objects::*;
 use rust_raytracer::render::*;
 
-static MAX_DEPTH: u32 = 5;
+static MAX_DEPTH: u32 = 15;
 
 fn main() -> std::io::Result<()> {
     let renderer = Renderer {
-        samples_range: (8, 1000),
+        samples_range: (32, 1000),
         max_depth: MAX_DEPTH,
         time_sampler: Some(halton_sampler(2)),
         tolerable_cv: 0.01,
