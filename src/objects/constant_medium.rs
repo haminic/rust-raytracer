@@ -1,5 +1,5 @@
 use crate::materials::{Isotropic, Material};
-use crate::objects::{Aabb, Hit, Hittable};
+use crate::objects::base::*;
 use crate::prelude::*;
 
 static EPSILON: f64 = 0.0001;

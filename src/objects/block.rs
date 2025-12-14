@@ -1,5 +1,6 @@
 use crate::materials::Material;
-use crate::objects::{Aabb, Hit, Hittable, HittableList, Quad};
+use crate::objects::base::*;
+use crate::objects::{HittableList, Quad};
 use crate::prelude::*;
 
 pub struct Block {

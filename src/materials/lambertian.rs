@@ -1,5 +1,5 @@
-use super::{Material, Scatter};
-use crate::objects::Hit;
+use crate::materials::{Material, Scatter};
+use crate::objects::base::Hit;
 use crate::prelude::*;
 
 pub struct Lambertian {

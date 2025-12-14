@@ -1,4 +1,5 @@
-use super::*;
+use crate::objects::base::Hittable;
+use crate::prelude::*;
 
 pub struct World {
     pub backdrop: Color,

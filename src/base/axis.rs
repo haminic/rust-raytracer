@@ -1,5 +1,3 @@
-use rand_distr::{Distribution, StandardUniform};
-
 #[derive(Clone, Copy)]
 pub enum Axis {
     X,
@@ -27,7 +25,7 @@ impl Axis {
     }
 }
 
-impl Distribution<Axis> for StandardUniform {
+impl rand_distr::Distribution<Axis> for rand_distr::StandardUniform {
     fn sample<R: rand::Rng + ?Sized>(&self, rng: &mut R) -> Axis {
         let axis = rng.random_range(0..3);
         match axis {

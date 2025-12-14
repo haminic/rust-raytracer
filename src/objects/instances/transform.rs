@@ -1,4 +1,4 @@
-use crate::objects::{Aabb, Hit, Hittable};
+use crate::objects::base::*;
 use crate::prelude::*;
 
 pub struct Transformed<T> {
@@ -34,7 +34,7 @@ impl<T: Hittable> Hittable for Transformed<T> {
         })
     }
 
-    fn bounding_box(&self) -> super::Aabb {
+    fn bounding_box(&self) -> Aabb {
         self.bbox
     }
 }
@@ -77,7 +77,7 @@ impl<T: Hittable> Hittable for Transforming<T> {
         })
     }
 
-    fn bounding_box(&self) -> super::Aabb {
+    fn bounding_box(&self) -> Aabb {
         self.bbox
     }
 }

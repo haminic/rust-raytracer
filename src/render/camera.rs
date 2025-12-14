@@ -1,29 +1,10 @@
-use crate::render::renderer::SampleFn;
-
-use super::*;
+use crate::prelude::*;
 
 /*
     This file contains
         1. Camera
         2. Resoltion
 */
-
-#[derive(Clone, Copy)]
-pub struct Resolution {
-    pub width: i32,
-    pub height: i32,
-}
-
-impl Resolution {
-    pub fn new(width: i32, height: i32) -> Self {
-        Self { width, height }
-    }
-
-    pub fn with_aspect_ratio(aspect_ratio: f64, width: i32) -> Self {
-        let height = ((width as f64 / aspect_ratio) as i32).max(1);
-        Self { width, height }
-    }
-}
 
 pub struct Camera {
     pub resolution: Resolution,
@@ -39,19 +20,17 @@ pub struct Camera {
 
 impl Camera {
     pub fn new(
-        resolution: Resolution,
         look_from: Point3,
         look_at: Point3,
         up_direction: Vec3,
-        vertical_fov: f64,
-        focus_distance: f64,
-        defocus_angle: f64,
+        resolution: Resolution,
+        settings: CameraSettings,
     ) -> Self {
         let center = look_from;
 
-        let theta = vertical_fov.to_radians();
+        let theta = settings.vertical_fov.to_radians();
         let h = (theta / 2.0).tan();
-        let viewport_height = 2.0 * h * focus_distance;
+        let viewport_height = 2.0 * h * settings.focus_distance;
         let viewport_width = viewport_height * (resolution.width as f64 / resolution.height as f64);
 
         let w = (look_from - look_at).unit_vector();
@@ -64,10 +43,12 @@ impl Camera {
         let pixel_delta_u = viewport_u / resolution.width as f64;
         let pixel_delta_v = viewport_v / resolution.height as f64;
 
-        let viewport_upper_left = center - focus_distance * w - 0.5 * viewport_u - 0.5 * viewport_v;
+        let viewport_upper_left =
+            center - settings.focus_distance * w - 0.5 * viewport_u - 0.5 * viewport_v;
         let pixel00_loc = viewport_upper_left + 0.5 * pixel_delta_u + 0.5 * pixel_delta_v;
 
-        let defocus_radius = focus_distance * (defocus_angle / 2.0).to_radians().tan();
+        let defocus_radius =
+            settings.focus_distance * (settings.defocus_angle / 2.0).to_radians().tan();
         let defocus_disk_u = u * defocus_radius;
         let defocus_disk_v = v * defocus_radius;
 
@@ -102,4 +83,70 @@ impl Camera {
         let p = sample_in_unit_disk();
         self.center + p.x * self.defocus_disk_u + p.y * self.defocus_disk_v
     }
+}
+
+#[derive(Clone, Copy)]
+pub struct Resolution {
+    pub width: i32,
+    pub height: i32,
+}
+
+impl Resolution {
+    pub fn with_aspect_ratio(aspect_ratio: f64, width: i32) -> Self {
+        let height = ((width as f64 / aspect_ratio) as i32).max(1);
+        Self { width, height }
+    }
+
+    pub fn square(width: i32) -> Self {
+        let height = width;
+        Self { width, height }
+    }
+}
+
+impl Default for Resolution {
+    fn default() -> Self {
+        Self {
+            width: 800,
+            height: 600,
+        }
+    }
+}
+
+pub struct CameraSettings {
+    vertical_fov: f64,
+    focus_distance: f64,
+    defocus_angle: f64,
+}
+
+impl CameraSettings {
+    pub fn with_fov(vertical_fov: f64) -> Self {
+        Self {
+            vertical_fov,
+            focus_distance: 10.0,
+            defocus_angle: 0.0,
+        }
+    }
+}
+
+impl Default for CameraSettings {
+    fn default() -> Self {
+        Self {
+            vertical_fov: 60.0,
+            focus_distance: 10.0,
+            defocus_angle: 0.0,
+        }
+    }
+}
+
+fn sample_square() -> Vec3 {
+    Vec3::new(random_unit_f64() - 0.5, random_unit_f64() - 0.5, 0.0)
+}
+
+fn sample_in_unit_disk() -> Vec3 {
+    use rand::random_range;
+    let r = random_unit_f64().sqrt();
+    let theta = random_range(0.0..(2.0 * PI));
+    let sin_theta = theta.sin();
+    let cos_theta = theta.cos();
+    Vec3::new(r * cos_theta, r * sin_theta, 0.0)
 }

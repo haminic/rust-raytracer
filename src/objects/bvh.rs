@@ -1,5 +1,6 @@
-use crate::objects::{Aabb, Hit, Hittable};
-use crate::{objects::HittableList, prelude::*};
+use crate::objects::HittableList;
+use crate::objects::base::*;
+use crate::prelude::*;
 
 use std::cmp::Ordering;
 

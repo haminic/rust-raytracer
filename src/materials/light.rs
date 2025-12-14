@@ -1,4 +1,4 @@
-use super::Material;
+use crate::materials::Material;
 use crate::prelude::*;
 
 pub struct DiffuseLight {

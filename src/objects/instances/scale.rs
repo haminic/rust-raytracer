@@ -1,4 +1,4 @@
-use crate::objects::{Aabb, Hit, Hittable};
+use crate::objects::base::*;
 use crate::prelude::*;
 
 pub struct Scaled<T> {

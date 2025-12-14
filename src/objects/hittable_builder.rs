@@ -1,7 +1,6 @@
-use crate::{
-    objects::{Hittable, Rotated, Rotating, Translated, Translating},
-    prelude::*,
-};
+use crate::objects::base::*;
+use crate::objects::instances::*;
+use crate::prelude::*;
 
 // Builder pattern for ease of use
 // Usage:

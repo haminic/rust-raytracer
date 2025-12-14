@@ -1,9 +1,12 @@
-use super::*;
+pub use std::fs::File;
+pub use std::io::{BufWriter, Write};
 
 use indicatif::{ProgressBar, ProgressStyle};
 use rayon::prelude::*;
 
-pub type SampleFn = Arc<dyn Fn(i32) -> f64 + Send + Sync>;
+use crate::prelude::*;
+use crate::render::Camera;
+use crate::render::World;
 
 pub struct Renderer {
     pub max_samples: i32,

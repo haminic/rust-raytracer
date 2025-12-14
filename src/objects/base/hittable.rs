@@ -1,4 +1,4 @@
-use crate::objects::{Aabb, Hit};
+use crate::objects::base::{Aabb, Hit};
 use crate::prelude::*;
 
 pub trait Hittable: Sync {

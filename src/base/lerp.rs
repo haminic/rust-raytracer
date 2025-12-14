@@ -1,5 +1,3 @@
-use std::ops::{Add, Mul};
-
 /*
     Linear Interpolation
 */
@@ -11,7 +9,7 @@ pub struct Lerp<T> {
 
 impl<T> Lerp<T>
 where
-    T: Mul<f64, Output = T> + Add<Output = T> + Copy,
+    T: std::ops::Mul<f64, Output = T> + std::ops::Add<Output = T> + Copy,
 {
     pub fn new(begin: T, end: T) -> Self {
         Self { begin, end }

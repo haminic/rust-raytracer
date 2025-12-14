@@ -1,25 +1,17 @@
-mod base;
 mod block;
 mod bvh;
 mod constant_medium;
 mod hittable_builder;
 mod hittable_list;
 mod quad;
-mod rotate;
 mod sphere;
-mod translate;
-mod scale;
-mod transform;
 
-pub use base::*;
+pub mod base;
+pub mod instances;
 pub use block::Block;
 pub use bvh::Bvh;
 pub use constant_medium::ConstantMedium;
 pub use hittable_builder::HittableBuilder;
 pub use hittable_list::HittableList;
 pub use quad::Quad;
-pub use rotate::{Rotated, Rotating};
 pub use sphere::Sphere;
-pub use translate::{Translated, Translating};
-pub use scale::{Scaled, Scaling};
-pub use transform::{Transformed, Transforming};

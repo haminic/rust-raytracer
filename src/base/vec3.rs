@@ -1,9 +1,4 @@
-use rand::random_range;
-use rand_distr::uniform::SampleRange;
-use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Sub, SubAssign};
-
 use crate::base::Axis;
-use crate::prelude::random_normal_f64;
 
 #[derive(Clone, Copy, Debug)]
 pub struct Vec3 {
@@ -50,8 +45,8 @@ impl Vec3 {
     }
 
     // --------------------- random algorithm ---------------------
-
-    pub fn random(range: impl SampleRange<f64> + Clone) -> Self {
+    pub fn random(range: impl rand::distr::uniform::SampleRange<f64> + Clone) -> Self {
+        use rand::random_range;
         Self::new(
             random_range(range.clone()),
             random_range(range.clone()),
@@ -112,14 +107,14 @@ impl Vec3 {
     }
 }
 
-impl Add for Vec3 {
+impl std::ops::Add for Vec3 {
     type Output = Vec3;
     fn add(self, rhs: Self) -> Self::Output {
         Vec3::new(self.x + rhs.x, self.y + rhs.y, self.z + rhs.z)
     }
 }
 
-impl Sub for Vec3 {
+impl std::ops::Sub for Vec3 {
     type Output = Vec3;
     fn sub(self, rhs: Self) -> Self::Output {
         Vec3::new(self.x - rhs.x, self.y - rhs.y, self.z - rhs.z)
@@ -127,7 +122,7 @@ impl Sub for Vec3 {
 }
 
 // Vec3 * Vec3 -> Vec3
-impl Mul for Vec3 {
+impl std::ops::Mul for Vec3 {
     type Output = Vec3;
     fn mul(self, rhs: Self) -> Self::Output {
         Vec3::new(self.x * rhs.x, self.y * rhs.y, self.z * rhs.z)
@@ -135,7 +130,7 @@ impl Mul for Vec3 {
 }
 
 // Vec3 * f64 -> Vec3
-impl Mul<f64> for Vec3 {
+impl std::ops::Mul<f64> for Vec3 {
     type Output = Vec3;
     fn mul(self, rhs: f64) -> Self::Output {
         Vec3::new(self.x * rhs, self.y * rhs, self.z * rhs)
@@ -143,7 +138,7 @@ impl Mul<f64> for Vec3 {
 }
 
 // f64 * Vec3 -> Vec3
-impl Mul<Vec3> for f64 {
+impl std::ops::Mul<Vec3> for f64 {
     type Output = Vec3;
     fn mul(self, rhs: Vec3) -> Self::Output {
         Vec3::new(self * rhs.x, self * rhs.y, self * rhs.z)
@@ -151,7 +146,7 @@ impl Mul<Vec3> for f64 {
 }
 
 // Vec3 / Vec3 -> Vec3
-impl Div for Vec3 {
+impl std::ops::Div for Vec3 {
     type Output = Vec3;
     fn div(self, rhs: Self) -> Self::Output {
         Vec3::new(self.x / rhs.x, self.y / rhs.y, self.z / rhs.z)
@@ -159,7 +154,7 @@ impl Div for Vec3 {
 }
 
 // Vec3 / f64 -> Vec3
-impl Div<f64> for Vec3 {
+impl std::ops::Div<f64> for Vec3 {
     type Output = Vec3;
     fn div(self, rhs: f64) -> Self::Output {
         Vec3::new(self.x / rhs, self.y / rhs, self.z / rhs)
@@ -167,7 +162,7 @@ impl Div<f64> for Vec3 {
 }
 
 // Vec3 += Vec3
-impl AddAssign for Vec3 {
+impl std::ops::AddAssign for Vec3 {
     fn add_assign(&mut self, rhs: Self) {
         self.x += rhs.x;
         self.y += rhs.y;
@@ -176,7 +171,7 @@ impl AddAssign for Vec3 {
 }
 
 // Vec3 -= Vec3
-impl SubAssign for Vec3 {
+impl std::ops::SubAssign for Vec3 {
     fn sub_assign(&mut self, rhs: Self) {
         self.x -= rhs.x;
         self.y -= rhs.y;
@@ -185,7 +180,7 @@ impl SubAssign for Vec3 {
 }
 
 // Vec3 *= f64
-impl MulAssign<f64> for Vec3 {
+impl std::ops::MulAssign<f64> for Vec3 {
     fn mul_assign(&mut self, rhs: f64) {
         self.x *= rhs;
         self.y *= rhs;
@@ -194,7 +189,7 @@ impl MulAssign<f64> for Vec3 {
 }
 
 // Vec3 /= f64
-impl DivAssign<f64> for Vec3 {
+impl std::ops::DivAssign<f64> for Vec3 {
     fn div_assign(&mut self, rhs: f64) {
         self.x /= rhs;
         self.y /= rhs;
@@ -203,9 +198,15 @@ impl DivAssign<f64> for Vec3 {
 }
 
 // -Vec3
-impl Neg for Vec3 {
+impl std::ops::Neg for Vec3 {
     type Output = Vec3;
     fn neg(self) -> Self::Output {
         Vec3::new(-self.x, -self.y, -self.z)
     }
+}
+
+fn random_normal_f64() -> f64 {
+    use rand_distr::{Distribution, Normal};
+    let normal = Normal::new(0.0, 1.0).unwrap();
+    normal.sample(&mut rand::rng())
 }
