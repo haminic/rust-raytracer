@@ -5,16 +5,20 @@ use rust_raytracer::materials::*;
 use rust_raytracer::objects::*;
 use rust_raytracer::render::*;
 
-static SAMPLES_PER_PIXEL: i32 = 20;
-static MAX_DEPTH: i32 = 10;
+static MAX_DEPTH: u32 = 10;
 
 fn main() -> std::io::Result<()> {
-    let renderer = Renderer::new(SAMPLES_PER_PIXEL, MAX_DEPTH);
+    let renderer = Renderer {
+        samples_range: (8, 1000),
+        max_depth: MAX_DEPTH,
+        time_sampler: Some(halton_sampler(2)),
+        tolerable_cv: 0.01,
+    };
     let file = get_output_file("simple_light")?;
 
     let (world, camera) = simple_light();
 
-    renderer.multi_threaded_render(&camera, &world, file, None)?;
+    renderer.multi_threaded_render(&camera, &world, file, None, None)?;
 
     Ok(())
 }
@@ -44,15 +48,13 @@ pub fn simple_light() -> (World, Camera) {
     geometry.add(Sphere::new(Point3::new(3.0, 1.0, -2.0), 1.5, difflight));
 
     let resolution = Resolution::with_aspect_ratio(16.0 / 9.0, 1200);
-    let cam = Camera::new(
-        resolution,
-        Point3::new(26.0, 3.0, 6.0),
-        Point3::new(0.0, 2.0, 0.0),
-        Vec3::new(0.0, 1.0, 0.0),
-        20.0,
-        10.0,
-        0.0,
-    );
+    let position = CameraPosition {
+        look_from: Point3::new(26.0, 3.0, 6.0),
+        look_at: Point3::new(0.0, 2.0, 0.0),
+        up_direction: Vec3::new(0.0, 1.0, 0.0),
+    };
+    let settings = CameraSettings::with_fov(20.0);
+    let cam = Camera::new(position, resolution, settings);
 
     (World::new(Color::new(0.0, 0.0, 0.0), geometry), cam)
 }

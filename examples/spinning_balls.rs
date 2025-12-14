@@ -5,16 +5,20 @@ use rust_raytracer::materials::*;
 use rust_raytracer::objects::*;
 use rust_raytracer::render::*;
 
-static SAMPLES_PER_PIXEL: i32 = 500;
-static MAX_DEPTH: i32 = 40;
+static MAX_DEPTH: u32 = 40;
 
 fn main() -> std::io::Result<()> {
-    let renderer = Renderer::new(SAMPLES_PER_PIXEL, MAX_DEPTH);
+    let renderer = Renderer {
+        samples_range: (8, 1000),
+        max_depth: MAX_DEPTH,
+        time_sampler: Some(halton_sampler(2)),
+        tolerable_cv: 0.01,
+    };
     let file = get_output_file("spinning_balls")?;
 
     let (world, camera) = spining_balls();
 
-    renderer.multi_threaded_render(&camera, &world, file, None)?;
+    renderer.multi_threaded_render(&camera, &world, file, None, None)?;
 
     Ok(())
 }
@@ -79,15 +83,13 @@ pub fn spining_balls() -> (World, Camera) {
     }
 
     let resolution = Resolution::with_aspect_ratio(1.0, 1200);
-    let cam = Camera::new(
-        resolution,
-        Point3::new(0.0, 20.0, 0.0),
-        Point3::new(0.0, 0.0, 0.0),
-        Vec3::new(0.0, 0.0, -1.0),
-        25.0,
-        10.0,
-        0.0,
-    );
+    let position = CameraPosition {
+        look_from: Point3::new(0.0, 20.0, 0.0),
+        look_at: Point3::new(0.0, 0.0, 0.0),
+        up_direction: Vec3::new(0.0, 0.0, -1.0),
+    };
+    let settings = CameraSettings::with_fov(25.0);
+    let cam = Camera::new(position, resolution, settings);
 
     (
         if !ROTATE {
