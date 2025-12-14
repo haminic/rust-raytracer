@@ -20,9 +20,13 @@ impl<T: Hittable> Scaled<T> {
     }
 }
 
-impl<T:Hittable> Hittable for Scaled<T> {
+impl<T: Hittable> Hittable for Scaled<T> {
     fn hit(&self, ray: &Ray, t_range: Interval) -> Option<Hit> {
-        let scaled_ray = Ray::with_time((ray.origin - self.center) / self.scale + self.center, ray.direction / self.scale, ray.time);
+        let scaled_ray = Ray::with_time(
+            (ray.origin - self.center) / self.scale + self.center,
+            ray.direction / self.scale,
+            ray.time,
+        );
         self.object.hit(&scaled_ray, t_range).map(|mut hit| {
             hit.point = self.scale * (hit.point - self.center) + self.center;
             hit.normal = (hit.normal / self.scale).unit_vector();
@@ -50,7 +54,7 @@ impl<T: Hittable> Scaling<T> {
             object,
             scale: Lerp::new(scale1, scale2),
             center,
-            bbox: Aabb::enclosing(bbox1, bbox2)
+            bbox: Aabb::enclosing(bbox1, bbox2),
         }
     }
 }
@@ -58,7 +62,11 @@ impl<T: Hittable> Scaling<T> {
 impl<T: Hittable> Hittable for Scaling<T> {
     fn hit(&self, ray: &Ray, t_range: Interval) -> Option<Hit> {
         let scale = self.scale.at(ray.time);
-        let scaled_ray = Ray::with_time((ray.origin - self.center) / scale + self.center, ray.direction / scale, ray.time);
+        let scaled_ray = Ray::with_time(
+            (ray.origin - self.center) / scale + self.center,
+            ray.direction / scale,
+            ray.time,
+        );
         self.object.hit(&scaled_ray, t_range).map(|mut hit| {
             hit.point = scale * (hit.point - self.center) + self.center;
             hit.normal = (hit.normal / scale).unit_vector();

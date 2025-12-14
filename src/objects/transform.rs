@@ -1,7 +1,7 @@
-use crate::objects::{Hit, Hittable, Aabb};
+use crate::objects::{Aabb, Hit, Hittable};
 use crate::prelude::*;
 
-pub struct  Transformed<T> {
+pub struct Transformed<T> {
     object: T,
     transform: Mat3,
     inv: Mat3,
@@ -13,21 +13,20 @@ impl<T: Hittable> Transformed<T> {
         let bbox = &transform * object.bounding_box();
         let inv = transform.inverse();
 
-        inv.map(|inv| {
-            Self {
-                object,
-                transform,
-                inv,
-                bbox
-            }
+        inv.map(|inv| Self {
+            object,
+            transform,
+            inv,
+            bbox,
         })
     }
 }
 
 impl<T: Hittable> Hittable for Transformed<T> {
     fn hit(&self, ray: &crate::prelude::Ray, t_range: crate::prelude::Interval) -> Option<Hit> {
-        let transformed_ray = Ray::with_time(&self.inv * ray.origin, &self.inv * ray.direction, ray.time);
-        
+        let transformed_ray =
+            Ray::with_time(&self.inv * ray.origin, &self.inv * ray.direction, ray.time);
+
         self.object.hit(&transformed_ray, t_range).map(|mut hit| {
             hit.point = &self.transform * hit.point;
             hit.normal = (&self.inv.transpose() * hit.normal).unit_vector();
@@ -43,7 +42,6 @@ impl<T: Hittable> Hittable for Transformed<T> {
 pub struct Transforming<T> {
     object: T,
     transform: Lerp<Mat3>,
-    inv: Lerp<Mat3>,
     bbox: Aabb,
 }
 
@@ -59,18 +57,15 @@ impl<T: Hittable> Transforming<T> {
             Some(Self {
                 object,
                 transform: Lerp::new(transform1, transform2),
-                inv: Lerp::new(inv1.unwrap(), inv2.unwrap()),
-                bbox: Aabb::enclosing(bbox1, bbox2)
+                bbox: Aabb::enclosing(bbox1, bbox2),
             })
-        }
-        else {
+        } else {
             None
         }
-        
     }
 }
 
-impl<T: Hittable> Hittable for Transforming<T>{
+impl<T: Hittable> Hittable for Transforming<T> {
     fn hit(&self, ray: &crate::prelude::Ray, t_range: crate::prelude::Interval) -> Option<Hit> {
         let transform = self.transform.at(ray.time);
         let inv = transform.inverse().unwrap();
@@ -83,7 +78,6 @@ impl<T: Hittable> Hittable for Transforming<T>{
     }
 
     fn bounding_box(&self) -> super::Aabb {
-        self.bbox        
+        self.bbox
     }
 }
-        
