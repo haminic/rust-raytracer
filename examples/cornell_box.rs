@@ -5,7 +5,7 @@ use rust_raytracer::materials::*;
 use rust_raytracer::objects::*;
 use rust_raytracer::render::*;
 
-static SAMPLES_PER_PIXEL: u32 = 1000;
+static SAMPLES_PER_PIXEL: u32 = 5000;
 static MAX_DEPTH: u32 = 50;
 
 fn main() -> std::io::Result<()> {
@@ -15,10 +15,11 @@ fn main() -> std::io::Result<()> {
         time_sampler: Some(halton_sampler(2)),
     };
     let file = get_output_file("cornell_box")?;
+    let heatmap_file = get_output_file("cornell_box_heatmap")?;
 
     let (world, camera) = cornell_box();
 
-    renderer.multi_threaded_render(&camera, &world, file, None, None)?;
+    renderer.multi_threaded_render(&camera, &world, file, Some(heatmap_file), None)?;
 
     Ok(())
 }

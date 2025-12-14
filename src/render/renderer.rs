@@ -15,7 +15,7 @@ pub struct Renderer {
 
 impl Renderer {
     const MIN_SAMPLES: u32 = 8; // > 0
-    const TOLERABLE_CV: f64 = 0.01; // Tolerable coefficiant of variation
+    const TOLERABLE_CV: f64 = 0.05; // Tolerable coefficiant of variation
 
     pub fn multi_threaded_render(
         &self,
@@ -78,9 +78,12 @@ impl Renderer {
 
             for &(_, samples) in &pixel_colors {
                 let intensity = samples as f64 / max_samples_used as f64;
+                let r = if intensity > 0.5 { (2.0 * (intensity - 0.5)).min(1.0) } else { 0.0 };
+                let g = if intensity > 0.5 { (2.0 * (1.0 - intensity)).min(1.0) } else { (2.0 * intensity).min(1.0) };
+                let b = if intensity < 0.5 { (2.0 * (0.5 - intensity)).min(1.0) } else { 0.0 };
                 write_color(
                     &mut heatmap_writer,
-                    Color::new(intensity, intensity, intensity),
+                    Color::new(r, g, b),
                 )?;
             }
         }
@@ -146,9 +149,13 @@ impl Renderer {
 
             for &samples in &samples_used {
                 let intensity = samples as f64 / max_samples_used as f64;
+
+                let r = if intensity > 0.5 { (2.0 * (intensity - 0.5)).min(1.0) } else { 0.0 };
+                let g = if intensity > 0.5 { (2.0 * (1.0 - intensity)).min(1.0) } else { (2.0 * intensity).min(1.0) };
+                let b = if intensity < 0.5 { (2.0 * (0.5 - intensity)).min(1.0) } else { 0.0 };
                 write_color(
                     &mut heatmap_writer,
-                    Color::new(intensity, intensity, intensity),
+                    Color::new(r, g, b),
                 )?;
             }
         }
@@ -170,12 +177,12 @@ impl Renderer {
             let ray_color = ray_color(&ray, self.max_depth, world);
             pixel_color += ray_color;
             // Update stats
-            stats.add(luminance(pixel_color));
+            stats.add(luminance(ray_color));
 
             if stats.n >= Self::MIN_SAMPLES {
                 // standard error
                 let se = (stats.variance() / stats.n as f64).sqrt();
-                if se < Self::TOLERABLE_CV * stats.mean.max(1e-3) {
+                if se < Self::TOLERABLE_CV * stats.mean.max(0.02) {
                     break;
                 }
             }
