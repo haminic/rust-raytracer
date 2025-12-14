@@ -26,7 +26,12 @@ impl Bvh {
     }
 
     pub fn new(mut objects: Vec<Box<dyn Hittable>>) -> Self {
-        let axis = rand::random();
+        let mut bbox = Aabb::EMPTY;
+        
+        for obj in objects.iter() {
+            bbox = Aabb::enclosing(bbox, obj.bounding_box());
+        }
+        let axis = bbox.longest_axis();
         let size = objects.len();
 
         match size {

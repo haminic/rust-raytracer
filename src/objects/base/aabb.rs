@@ -72,6 +72,21 @@ impl Aabb {
         true
     }
 
+    pub fn longest_axis(&self) -> Axis {
+        let axis: i32;
+        if self.x.size() > self.y.size() {
+            axis = if self.x.size() > self.z.size() {0} else {2};
+        }
+        else {
+            axis = if self.y.size() > self.z.size() {1} else {2};
+        }
+        match axis {
+            0 => Axis::X,
+            1 => Axis::Y,
+            _ => Axis::Z,
+        }
+    }
+
     const fn pad_to_minimum(&mut self) {
         let delta = 0.0001;
         if self.x.size() < delta {
