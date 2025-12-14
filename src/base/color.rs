@@ -29,3 +29,7 @@ pub fn write_color(writer: &mut BufWriter<File>, pixel_color: Color) -> std::io:
 
     writeln!(writer, "{} {} {}", r_byte, g_byte, b_byte)
 }
+
+pub fn luminance(color: Color) -> f64 {
+    0.2126 * color.x + 0.7152 * color.y + 0.0722 * color.z
+}

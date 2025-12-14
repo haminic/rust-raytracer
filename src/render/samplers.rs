@@ -1,11 +1,13 @@
 use crate::prelude::*;
-use rand::random_range;
 
 // --- LOW DISCREPENCY SEQUENCES ---
-pub type SampleFn = Arc<dyn Fn(i32) -> f64 + Send + Sync>;
+pub type SampleFn = Arc<dyn Fn(u32) -> f64 + Send + Sync>;
 
-pub fn halton(mut index: i32) -> f64 {
-    let base = 2;
+pub fn uniform_sampler() -> SampleFn {
+    Arc::new(move |_| random_unit_f64())
+}
+
+pub fn halton(mut index: u32, base: u32) -> f64 {
     let mut f = 1.0;
     let mut result = 0.0;
 
@@ -16,6 +18,10 @@ pub fn halton(mut index: i32) -> f64 {
     }
 
     result
+}
+
+pub fn halton_sampler(base: u32) -> SampleFn {
+    Arc::new(move |idx| halton(idx, base))
 }
 
 pub fn sobol(n: u32) -> f64 {
@@ -34,14 +40,22 @@ pub fn sobol(n: u32) -> f64 {
     result
 }
 
-// --- RANDOM VARIABLE PDF UTILS ---
-pub trait Randomable {
+pub fn sobol_sampler() -> SampleFn {
+    Arc::new(move |idx| sobol(idx))
+}
+
+/// Returns a sampler that draws samples according to the given PDF in [0, max)
+pub fn sampler_from_randomable(rv: impl Randomable + 'static) -> SampleFn {
+    Arc::new(move |_| rv.sample())
+}
+
+pub trait Randomable: Send + Sync {
     const SUPREMUM: f64;
     fn eval(&self, _x: f64) -> f64;
     fn sample(&self) -> f64 {
         loop {
             let x: f64 = random_unit_f64();
-            let choice: f64 = random_range(0.0..=Self::SUPREMUM);
+            let choice: f64 = rand::random_range(0.0..=Self::SUPREMUM);
             if choice <= self.eval(x) {
                 return x;
             }

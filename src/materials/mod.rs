@@ -10,7 +10,7 @@ pub use lambertian::Lambertian;
 pub use light::DiffuseLight;
 pub use metal::Metal;
 
-use crate::objects::base::Hit;
+use crate::objects::Hit;
 use crate::prelude::*;
 
 pub trait Material: Send + Sync {

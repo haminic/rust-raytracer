@@ -6,15 +6,15 @@ use rust_raytracer::materials::*;
 use rust_raytracer::objects::*;
 use rust_raytracer::render::*;
 
-static SAMPLES_PER_PIXEL: i32 = 150;
-static MAX_DEPTH: i32 = 25;
+static SAMPLES_PER_PIXEL: u32 = 150;
+static MAX_DEPTH: u32 = 25;
 static N_BALLS: i32 = 25;
 
 fn main() -> std::io::Result<()> {
     let renderer = Renderer {
         max_samples: SAMPLES_PER_PIXEL,
         max_depth: MAX_DEPTH,
-        time_sampler: None,
+        time_sampler: Some(halton_sampler(2)),
     };
 
     let (world, camera) = bouncing_balls(N_BALLS, true);
@@ -23,15 +23,15 @@ fn main() -> std::io::Result<()> {
     let file = get_output_file("bouncing_heatmap")?;
     renderer.multi_threaded_render(&camera, &world, file, Some(heatmap_file), None)?;
 
-    // let (world, camera) = bouncing_balls(N_BALLS, false);
-    // println!("Render Task #2: Multi-threaded, using array");
-    // let file = get_output_file("bouncing_balls_mt")?;
-    // renderer.multi_threaded_render(&camera, &world, file, None, None)?;
+    let (world, camera) = bouncing_balls(N_BALLS, false);
+    println!("Render Task #2: Multi-threaded, using array");
+    let file = get_output_file("bouncing_balls_mt")?;
+    renderer.multi_threaded_render(&camera, &world, file, None, None)?;
 
-    // let (world, camera) = bouncing_balls(N_BALLS, false);
-    // println!("Render Task #3: Single-threaded, using array (WARNING: Takes very long)");
-    // let file = get_output_file("bouncing_balls_st")?;
-    // renderer.single_threaded_render(&camera, &world, file, None, None)?;
+    let (world, camera) = bouncing_balls(N_BALLS, false);
+    println!("Render Task #3: Single-threaded, using array (WARNING: Takes very long)");
+    let file = get_output_file("bouncing_balls_st")?;
+    renderer.single_threaded_render(&camera, &world, file, None, None)?;
 
     Ok(())
 }
@@ -100,16 +100,18 @@ pub fn bouncing_balls(n: i32, bvh: bool) -> (World, Camera) {
     let material3 = Metal::new(Metal::GOLD_ALBEDO);
     geometry.add(Sphere::new(Point3::new(-4.0, 1.0, 0.0), 1.0, material3));
 
+    let position = CameraPosition {
+        look_from: Point3::new(10.0, 2.0, 5.0),
+        look_at: Point3::new(0.0, 0.0, 0.0),
+        up_direction: Vec3::new(0.0, 1.0, 0.0),
+    };
     let resolution = Resolution::with_aspect_ratio(16.0 / 9.0, 1200);
-    let cam = Camera::new(
-        resolution,
-        Point3::new(10.0, 2.0, 4.0),
-        Point3::new(0.0, 0.0, 0.0),
-        Vec3::new(0.0, 1.0, 0.0),
-        20.0,
-        10.0,
-        0.6,
-    );
+    let settings = CameraSettings {
+        vertical_fov: 20.0,
+        focus_distance: 10.0,
+        defocus_angle: 0.6,
+    };
+    let cam = Camera::new(position, resolution, settings);
 
     let backdrop_color = Color::new(0.70, 0.80, 1.00);
 

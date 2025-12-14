@@ -19,22 +19,16 @@ pub struct Camera {
 }
 
 impl Camera {
-    pub fn new(
-        look_from: Point3,
-        look_at: Point3,
-        up_direction: Vec3,
-        resolution: Resolution,
-        settings: CameraSettings,
-    ) -> Self {
-        let center = look_from;
+    pub fn new(position: CameraPosition, resolution: Resolution, settings: CameraSettings) -> Self {
+        let center = position.look_from;
 
         let theta = settings.vertical_fov.to_radians();
         let h = (theta / 2.0).tan();
         let viewport_height = 2.0 * h * settings.focus_distance;
         let viewport_width = viewport_height * (resolution.width as f64 / resolution.height as f64);
 
-        let w = (look_from - look_at).unit_vector();
-        let u = up_direction.cross(w).unit_vector();
+        let w = (position.look_from - position.look_at).unit_vector();
+        let u = position.up_direction.cross(w).unit_vector();
         let v = w.cross(u);
 
         let viewport_u = viewport_width * u;
@@ -65,7 +59,7 @@ impl Camera {
         }
     }
 
-    pub fn sample_ray(&self, i: i32, j: i32, time: f64) -> Ray {
+    pub fn sample_ray(&self, i: u32, j: u32, time: f64) -> Ray {
         let offset = sample_square();
         let pixel_sample = self.pixel00_loc
             + (i as f64 + offset.x) * self.pixel_delta_u
@@ -86,18 +80,25 @@ impl Camera {
 }
 
 #[derive(Clone, Copy)]
+pub struct CameraPosition {
+    pub look_from: Point3,
+    pub look_at: Point3,
+    pub up_direction: Vec3,
+}
+
+#[derive(Clone, Copy)]
 pub struct Resolution {
-    pub width: i32,
-    pub height: i32,
+    pub width: u32,
+    pub height: u32,
 }
 
 impl Resolution {
-    pub fn with_aspect_ratio(aspect_ratio: f64, width: i32) -> Self {
-        let height = ((width as f64 / aspect_ratio) as i32).max(1);
+    pub fn with_aspect_ratio(aspect_ratio: f64, width: u32) -> Self {
+        let height = ((width as f64 / aspect_ratio) as u32).max(1);
         Self { width, height }
     }
 
-    pub fn square(width: i32) -> Self {
+    pub fn square(width: u32) -> Self {
         let height = width;
         Self { width, height }
     }
@@ -112,10 +113,11 @@ impl Default for Resolution {
     }
 }
 
+#[derive(Clone, Copy)]
 pub struct CameraSettings {
-    vertical_fov: f64,
-    focus_distance: f64,
-    defocus_angle: f64,
+    pub vertical_fov: f64,
+    pub focus_distance: f64,
+    pub defocus_angle: f64,
 }
 
 impl CameraSettings {

@@ -134,6 +134,10 @@ impl Mul<Aabb> for &Mat3 {
         let min_pos = self * Vec3::new(rhs.x.min, rhs.y.min, rhs.z.min);
         let max_pos = self * Vec3::new(rhs.x.max, rhs.y.max, rhs.z.max);
 
-        Aabb::new(Interval::new(min_pos.x, max_pos.x), Interval::new(min_pos.y, max_pos.y), Interval::new(min_pos.z, max_pos.z))
+        Aabb::new(
+            Interval::new(min_pos.x, max_pos.x),
+            Interval::new(min_pos.y, max_pos.y),
+            Interval::new(min_pos.z, max_pos.z),
+        )
     }
 }

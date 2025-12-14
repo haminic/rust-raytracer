@@ -1,5 +1,5 @@
 use crate::materials::{Material, Scatter};
-use crate::objects::base::Hit;
+use crate::objects::Hit;
 use crate::prelude::*;
 
 /*

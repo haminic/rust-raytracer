@@ -1,7 +1,9 @@
 mod camera;
 mod renderer;
+mod samplers;
 mod world;
 
-pub use camera::{Camera, Resolution};
+pub use camera::*;
 pub use renderer::Renderer;
+pub use samplers::*;
 pub use world::World;

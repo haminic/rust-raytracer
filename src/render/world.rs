@@ -1,4 +1,4 @@
-use crate::objects::base::Hittable;
+use crate::objects::Hittable;
 use crate::prelude::*;
 
 pub struct World {
