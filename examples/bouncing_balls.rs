@@ -11,22 +11,27 @@ static MAX_DEPTH: i32 = 25;
 static N_BALLS: i32 = 25;
 
 fn main() -> std::io::Result<()> {
-    let renderer = Renderer::new(SAMPLES_PER_PIXEL, MAX_DEPTH);
+    let renderer = Renderer {
+        max_samples: SAMPLES_PER_PIXEL,
+        max_depth: MAX_DEPTH,
+        time_sampler: None,
+    };
 
     let (world, camera) = bouncing_balls(N_BALLS, true);
     println!("Render Task #1: Multi-threaded, using BVH tree");
-    let file = get_output_file("bouncing_balls_mt_bvh")?;
-    renderer.multi_threaded_render(&camera, &world, file, None)?;
+    let heatmap_file = get_output_file("bouncing_balls_mt_bvh")?;
+    let file = get_output_file("bouncing_heatmap")?;
+    renderer.multi_threaded_render(&camera, &world, file, Some(heatmap_file), None)?;
 
-    let (world, camera) = bouncing_balls(N_BALLS, false);
-    println!("Render Task #2: Multi-threaded, using array");
-    let file = get_output_file("bouncing_balls_mt")?;
-    renderer.multi_threaded_render(&camera, &world, file, None)?;
+    // let (world, camera) = bouncing_balls(N_BALLS, false);
+    // println!("Render Task #2: Multi-threaded, using array");
+    // let file = get_output_file("bouncing_balls_mt")?;
+    // renderer.multi_threaded_render(&camera, &world, file, None, None)?;
 
-    let (world, camera) = bouncing_balls(N_BALLS, false);
-    println!("Render Task #3: Single-threaded, using array (WARNING: Takes very long)");
-    let file = get_output_file("bouncing_balls_st")?;
-    renderer.single_threaded_render(&camera, &world, file, None)?;
+    // let (world, camera) = bouncing_balls(N_BALLS, false);
+    // println!("Render Task #3: Single-threaded, using array (WARNING: Takes very long)");
+    // let file = get_output_file("bouncing_balls_st")?;
+    // renderer.single_threaded_render(&camera, &world, file, None, None)?;
 
     Ok(())
 }

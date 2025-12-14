@@ -1,3 +1,5 @@
+use crate::render::renderer::SampleFn;
+
 use super::*;
 
 /*
@@ -82,14 +84,13 @@ impl Camera {
         }
     }
 
-    pub fn sample_ray(&self, i: i32, j: i32) -> Ray {
+    pub fn sample_ray(&self, i: i32, j: i32, time: f64) -> Ray {
         let offset = sample_square();
         let pixel_sample = self.pixel00_loc
             + (i as f64 + offset.x) * self.pixel_delta_u
             + (j as f64 + offset.y) * self.pixel_delta_v;
         let defocus_disk_sample = self.sample_defocus_disk();
         // Monte Carlo
-        let time = Randomizer::LOGISTIC.sample();
         Ray::with_time(
             defocus_disk_sample,
             pixel_sample - defocus_disk_sample,

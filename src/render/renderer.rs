@@ -3,38 +3,27 @@ use super::*;
 use indicatif::{ProgressBar, ProgressStyle};
 use rayon::prelude::*;
 
+pub type SampleFn = Arc<dyn Fn(i32) -> f64 + Send + Sync>;
+
 pub struct Renderer {
-    samples_per_pixel: i32,
-    pixel_samples_scale: f64,
-    max_depth: i32,
+    pub max_samples: i32,
+    pub max_depth: i32,
+    pub time_sampler: Option<SampleFn>,
 }
 
 impl Renderer {
-    pub fn new(samples_per_pixel: i32, max_depth: i32) -> Self {
-        let pixel_samples_scale = 1.0 / samples_per_pixel as f64;
-        Self {
-            samples_per_pixel,
-            pixel_samples_scale,
-            max_depth,
-        }
-    }
+    const MIN_SAMPLES: i32 = 8; // > 0
+    const TOLERABLE_CV: f64 = 0.01; // Tolerable coefficiant of variation
 
     pub fn multi_threaded_render(
         &self,
         camera: &Camera,
         world: &World,
         file: File,
+        heatmap_file: Option<File>,
         style: Option<ProgressStyle>,
     ) -> std::io::Result<()> {
-        let mut writer = BufWriter::new(file);
-        writeln!(writer, "P3")?;
-        writeln!(
-            writer,
-            "{} {}",
-            camera.resolution.width, camera.resolution.height
-        )?;
-        writeln!(writer, "255")?;
-
+        // --- PROGRESS BAR ---
         let style = style.unwrap_or(
             ProgressStyle::with_template("[{elapsed_precise}] [{bar:40}] {percent:>3}%")
                 .unwrap()
@@ -45,40 +34,45 @@ impl Renderer {
         let pb = Arc::new(ProgressBar::new(total_pixels as u64));
         pb.set_style(style);
 
-        let pixel_colors: Vec<Color> = (0..camera.resolution.height)
+        // --- MAIN LOOP ---
+        let pixel_colors: Vec<(Color, i32)> = (0..camera.resolution.height)
             .into_par_iter()
             .flat_map(|j| {
                 let pb = pb.clone();
                 (0..camera.resolution.width).into_par_iter().map(move |i| {
+                    let mut stats = RunningStats::new();
+
                     let mut pixel_color = Color::new(0.0, 0.0, 0.0);
-                    for _ in 0..self.samples_per_pixel {
-                        let ray = camera.sample_ray(i, j);
-                        pixel_color += ray_color(&ray, self.max_depth, world)
+                    for s in 0..self.max_samples {
+                        let time = match &self.time_sampler {
+                            None => random_unit_f64(),
+                            Some(sampler) => sampler(s + i + j * camera.resolution.width),
+                        };
+                        let ray = camera.sample_ray(i, j, time);
+                        let ray_color = ray_color(&ray, self.max_depth, world);
+                        pixel_color += ray_color;
+                        let luminance =
+                            0.2126 * ray_color.x + 0.7152 * ray_color.y + 0.0722 * ray_color.z;
+                        // Update stats
+                        stats.add(luminance);
+
+                        if stats.n >= Self::MIN_SAMPLES {
+                            // standard error
+                            let se = (stats.variance() / stats.n as f64).sqrt();
+                            if se < Self::TOLERABLE_CV * stats.mean.max(1e-3) {
+                                break;
+                            }
+                        }
                     }
                     pb.inc(1);
 
-                    // Return the pixel color
-                    self.pixel_samples_scale * pixel_color
+                    // Return the pixel color and number of samples
+                    (pixel_color / stats.n as f64, stats.n)
                 })
             })
             .collect();
 
-        for pixel_color in pixel_colors {
-            write_color(&mut writer, pixel_color)?;
-        }
-
-        pb.finish();
-        println!("\nDone!");
-        Ok(())
-    }
-
-    pub fn single_threaded_render(
-        &self,
-        camera: &Camera,
-        world: &World,
-        file: File,
-        style: Option<ProgressStyle>,
-    ) -> std::io::Result<()> {
+        // --- WRITE TO MAIN FILE ---
         let mut writer = BufWriter::new(file);
         writeln!(writer, "P3")?;
         writeln!(
@@ -88,6 +82,45 @@ impl Renderer {
         )?;
         writeln!(writer, "255")?;
 
+        let mut max_samples_used = 0;
+        for &(color, samples) in &pixel_colors {
+            write_color(&mut writer, color)?;
+            max_samples_used = max_samples_used.max(samples);
+        }
+
+        // --- WRITE TO HEATMAP FILE ---
+        if let Some(heatmap_file) = heatmap_file {
+            let mut heatmap_writer = BufWriter::new(heatmap_file);
+            writeln!(heatmap_writer, "P3")?;
+            writeln!(
+                heatmap_writer,
+                "{} {}",
+                camera.resolution.width, camera.resolution.height
+            )?;
+            writeln!(heatmap_writer, "255")?;
+
+            for &(_, samples) in &pixel_colors {
+                let intensity = samples as f64 / max_samples_used as f64;
+                write_color(
+                    &mut heatmap_writer,
+                    Color::new(intensity, intensity, intensity),
+                )?;
+            }
+        }
+
+        pb.finish();
+        Ok(())
+    }
+
+    pub fn single_threaded_render(
+        &self,
+        camera: &Camera,
+        world: &World,
+        file: File,
+        heatmap_file: Option<File>,
+        style: Option<ProgressStyle>,
+    ) -> std::io::Result<()> {
+        // --- PROGRESS BAR ---
         let style = style.unwrap_or(
             ProgressStyle::with_template("[{elapsed_precise}] [{bar:40}] {percent:>3}%")
                 .unwrap()
@@ -98,22 +131,76 @@ impl Renderer {
         let pb = ProgressBar::new(total_pixels as u64);
         pb.set_style(style);
 
+        // --- SETUP WRITER FOR MAIN FILE ---
+        let mut writer = BufWriter::new(file);
+        writeln!(writer, "P3")?;
+        writeln!(
+            writer,
+            "{} {}",
+            camera.resolution.width, camera.resolution.height
+        )?;
+        writeln!(writer, "255")?;
+
+        // for writing to heatmap
+        let mut samples_used: Vec<i32> = Vec::new();
+        let mut max_samples_used = 0;
+
+        // --- MAIN LOOP ---
         for j in 0..camera.resolution.height {
             for i in 0..camera.resolution.width {
+                let mut stats = RunningStats::new();
+
                 let mut pixel_color = Color::new(0.0, 0.0, 0.0);
-                for _ in 0..self.samples_per_pixel {
-                    let ray = camera.sample_ray(i, j);
-                    pixel_color += ray_color(&ray, self.max_depth, world);
+                for s in 0..self.max_samples {
+                    let time = match &self.time_sampler {
+                        None => random_unit_f64(),
+                        Some(sampler) => sampler(s + i + camera.resolution.width * j),
+                    };
+                    let ray = camera.sample_ray(i, j, time);
+                    let ray_color = ray_color(&ray, self.max_depth, world);
+                    pixel_color += ray_color;
+                    let luminance =
+                        0.2126 * ray_color.x + 0.7152 * ray_color.y + 0.0722 * ray_color.z;
+                    // Update stats
+                    stats.add(luminance);
+
+                    if stats.n >= Self::MIN_SAMPLES {
+                        // standard error
+                        let se = (stats.variance() / stats.n as f64).sqrt();
+                        if se < Self::TOLERABLE_CV * stats.mean.max(1e-3) {
+                            break;
+                        }
+                    }
                 }
 
-                let scaled_color = self.pixel_samples_scale * pixel_color;
-                write_color(&mut writer, scaled_color)?;
+                write_color(&mut writer, pixel_color / stats.n as f64)?;
+                max_samples_used = max_samples_used.max(stats.n);
+                samples_used.push(stats.n);
                 pb.inc(1);
             }
         }
 
+        // --- WRITE TO HEATMAP FILE ---
+        if let Some(heatmap_file) = heatmap_file {
+            let mut heatmap_writer = BufWriter::new(heatmap_file);
+            writeln!(heatmap_writer, "P3")?;
+            writeln!(
+                heatmap_writer,
+                "{} {}",
+                camera.resolution.width, camera.resolution.height
+            )?;
+            writeln!(heatmap_writer, "255")?;
+
+            for &samples in &samples_used {
+                let intensity = samples as f64 / max_samples_used as f64;
+                write_color(
+                    &mut heatmap_writer,
+                    Color::new(intensity, intensity, intensity),
+                )?;
+            }
+        }
+
         pb.finish();
-        println!("\nDone!");
         Ok(())
     }
 }
@@ -134,5 +221,39 @@ fn ray_color(ray: &Ray, depth: i32, world: &World) -> Color {
         }
     } else {
         world.backdrop
+    }
+}
+
+// Helper struct for adaptive sampling
+struct RunningStats {
+    n: i32,
+    mean: f64,
+    m2: f64,
+}
+
+impl RunningStats {
+    fn new() -> Self {
+        Self {
+            n: 0,
+            mean: 0.0,
+            m2: 0.0,
+        }
+    }
+
+    fn add(&mut self, x: f64) {
+        self.n += 1;
+        let delta = x - self.mean;
+        self.mean += delta / self.n as f64;
+        let delta2 = x - self.mean;
+        self.m2 += delta * delta2
+    }
+
+    // Welford's online algorithm
+    fn variance(&self) -> f64 {
+        if self.n > 1 {
+            self.m2 / (self.n as f64 - 1.0)
+        } else {
+            0.0
+        }
     }
 }
