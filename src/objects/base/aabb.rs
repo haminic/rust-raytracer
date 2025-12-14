@@ -73,17 +73,18 @@ impl Aabb {
     }
 
     pub fn longest_axis(&self) -> Axis {
-        let axis: i32;
         if self.x.size() > self.y.size() {
-            axis = if self.x.size() > self.z.size() {0} else {2};
-        }
-        else {
-            axis = if self.y.size() > self.z.size() {1} else {2};
-        }
-        match axis {
-            0 => Axis::X,
-            1 => Axis::Y,
-            _ => Axis::Z,
+            if self.x.size() > self.z.size() {
+                Axis::X
+            } else {
+                Axis::Z
+            }
+        } else {
+            if self.y.size() > self.z.size() {
+                Axis::Y
+            } else {
+                Axis::Z
+            }
         }
     }
 
