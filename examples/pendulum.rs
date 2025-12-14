@@ -5,14 +5,14 @@ use rust_raytracer::materials::*;
 use rust_raytracer::objects::*;
 use rust_raytracer::render::*;
 
-static SAMPLES_PER_PIXEL: u32 = 30;
 static MAX_DEPTH: u32 = 10;
 
 fn main() -> std::io::Result<()> {
     let renderer = Renderer {
-        max_samples: SAMPLES_PER_PIXEL,
+        samples_range: (8, 1000),
         max_depth: MAX_DEPTH,
         time_sampler: Some(halton_sampler(2)),
+        tolerable_cv: 0.01,
     };
     let file = get_output_file("pendulum")?;
 

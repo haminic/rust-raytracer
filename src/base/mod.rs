@@ -7,7 +7,7 @@ mod ray;
 mod vec3;
 
 pub use axis::Axis;
-pub use color::{Color, luminance, write_color};
+pub use color::*;
 pub use interval::Interval;
 pub use lerp::Lerp;
 pub use mat3::Mat3;

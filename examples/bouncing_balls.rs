@@ -6,21 +6,21 @@ use rust_raytracer::materials::*;
 use rust_raytracer::objects::*;
 use rust_raytracer::render::*;
 
-static SAMPLES_PER_PIXEL: u32 = 150;
 static MAX_DEPTH: u32 = 25;
 static N_BALLS: i32 = 25;
 
 fn main() -> std::io::Result<()> {
     let renderer = Renderer {
-        max_samples: SAMPLES_PER_PIXEL,
+        samples_range: (8, 150),
         max_depth: MAX_DEPTH,
         time_sampler: Some(halton_sampler(2)),
+        tolerable_cv: 0.01,
     };
 
     let (world, camera) = bouncing_balls(N_BALLS, true);
     println!("Render Task #1: Multi-threaded, using BVH tree");
-    let heatmap_file = get_output_file("bouncing_balls_mt_bvh")?;
-    let file = get_output_file("bouncing_heatmap")?;
+    let file = get_output_file("bouncing_balls_mt_bvh")?;
+    let heatmap_file = get_output_file("bouncing_heatmap")?;
     renderer.multi_threaded_render(&camera, &world, file, Some(heatmap_file), None)?;
 
     let (world, camera) = bouncing_balls(N_BALLS, false);

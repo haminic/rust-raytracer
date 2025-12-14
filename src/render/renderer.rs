@@ -8,15 +8,13 @@ use crate::prelude::*;
 use crate::render::{Camera, SampleFn, World};
 
 pub struct Renderer {
-    pub max_samples: u32,
     pub max_depth: u32,
     pub time_sampler: Option<SampleFn>,
+    pub samples_range: (u32, u32),
+    pub tolerable_cv: f64,
 }
 
 impl Renderer {
-    const MIN_SAMPLES: u32 = 8; // > 0
-    const TOLERABLE_CV: f64 = 0.05; // Tolerable coefficiant of variation
-
     pub fn multi_threaded_render(
         &self,
         camera: &Camera,
@@ -77,14 +75,9 @@ impl Renderer {
             writeln!(heatmap_writer, "255")?;
 
             for &(_, samples) in &pixel_colors {
-                let intensity = samples as f64 / max_samples_used as f64;
-                let r = if intensity > 0.5 { (2.0 * (intensity - 0.5)).min(1.0) } else { 0.0 };
-                let g = if intensity > 0.5 { (2.0 * (1.0 - intensity)).min(1.0) } else { (2.0 * intensity).min(1.0) };
-                let b = if intensity < 0.5 { (2.0 * (0.5 - intensity)).min(1.0) } else { 0.0 };
-                write_color(
-                    &mut heatmap_writer,
-                    Color::new(r, g, b),
-                )?;
+                let intensity = (samples - self.samples_range.0) as f64
+                    / (max_samples_used - self.samples_range.0) as f64;
+                write_color(&mut heatmap_writer, get_heatmap_color(intensity))?;
             }
         }
 
@@ -148,15 +141,9 @@ impl Renderer {
             writeln!(heatmap_writer, "255")?;
 
             for &samples in &samples_used {
-                let intensity = samples as f64 / max_samples_used as f64;
-
-                let r = if intensity > 0.5 { (2.0 * (intensity - 0.5)).min(1.0) } else { 0.0 };
-                let g = if intensity > 0.5 { (2.0 * (1.0 - intensity)).min(1.0) } else { (2.0 * intensity).min(1.0) };
-                let b = if intensity < 0.5 { (2.0 * (0.5 - intensity)).min(1.0) } else { 0.0 };
-                write_color(
-                    &mut heatmap_writer,
-                    Color::new(r, g, b),
-                )?;
+                let intensity = (samples - self.samples_range.0) as f64
+                    / (max_samples_used - self.samples_range.0) as f64;
+                write_color(&mut heatmap_writer, get_heatmap_color(intensity))?;
             }
         }
 
@@ -168,7 +155,7 @@ impl Renderer {
     pub fn pixel_color(&self, camera: &Camera, world: &World, i: u32, j: u32) -> (Color, u32) {
         let mut stats = RunningStats::new();
         let mut pixel_color = Color::new(0.0, 0.0, 0.0);
-        for s in 0..self.max_samples {
+        for s in 0..self.samples_range.1 {
             let time = match &self.time_sampler {
                 None => random_unit_f64(),
                 Some(sampler) => sampler(s + i + j * camera.resolution.width),
@@ -179,10 +166,9 @@ impl Renderer {
             // Update stats
             stats.add(luminance(ray_color));
 
-            if stats.n >= Self::MIN_SAMPLES {
+            if stats.n >= self.samples_range.0 {
                 // standard error
-                let se = (stats.variance() / stats.n as f64).sqrt();
-                if se < Self::TOLERABLE_CV * stats.mean.max(0.02) {
+                if stats.variance().sqrt() < self.tolerable_cv * stats.mean.max(0.001) {
                     break;
                 }
             }

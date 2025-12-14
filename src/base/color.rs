@@ -33,3 +33,34 @@ pub fn write_color(writer: &mut BufWriter<File>, pixel_color: Color) -> std::io:
 pub fn luminance(color: Color) -> f64 {
     0.2126 * color.x + 0.7152 * color.y + 0.0722 * color.z
 }
+
+pub fn get_heatmap_color(value: f64) -> Color {
+    let v = value.clamp(0.0, 1.0);
+    let r;
+    let g;
+    let b;
+
+    if v <= 0.25 {
+        // Blue to Cyan
+        r = 0.0;
+        g = 4.0 * v;
+        b = 1.0;
+    } else if v <= 0.5 {
+        // Cyan to Green
+        r = 0.0;
+        g = 1.0;
+        b = 1.0 - 4.0 * (v - 0.25);
+    } else if v <= 0.75 {
+        // Green to Yellow
+        r = 4.0 * (v - 0.5);
+        g = 1.0;
+        b = 0.0;
+    } else {
+        // Yellow to Red
+        r = 1.0;
+        g = 1.0 - 4.0 * (v - 0.75);
+        b = 0.0;
+    }
+
+    Color::new(r, g, b)
+}
