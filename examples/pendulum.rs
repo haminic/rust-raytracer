@@ -5,16 +5,20 @@ use rust_raytracer::materials::*;
 use rust_raytracer::objects::*;
 use rust_raytracer::render::*;
 
-static SAMPLES_PER_PIXEL: i32 = 30;
-static MAX_DEPTH: i32 = 10;
+static SAMPLES_PER_PIXEL: u32 = 30;
+static MAX_DEPTH: u32 = 10;
 
 fn main() -> std::io::Result<()> {
-    let renderer = Renderer::new(SAMPLES_PER_PIXEL, MAX_DEPTH);
+    let renderer = Renderer {
+        max_samples: SAMPLES_PER_PIXEL,
+        max_depth: MAX_DEPTH,
+        time_sampler: Some(halton_sampler(2)),
+    };
     let file = get_output_file("pendulum")?;
 
     let (world, camera) = pendulum();
 
-    renderer.multi_threaded_render(&camera, &world, file, None)?;
+    renderer.multi_threaded_render(&camera, &world, file, None, None)?;
 
     Ok(())
 }
@@ -132,16 +136,14 @@ pub fn pendulum() -> (World, Camera) {
 
     geometry.add(ConstantMedium::new(fog_boundary, fog_density, fog_color));
 
-    let resolution = Resolution::with_aspect_ratio(1.0, 600);
-    let cam = Camera::new(
-        resolution,
-        Point3::new(278.0, 278.0, -800.0),
-        Point3::new(278.0, 278.0, 0.0),
-        Vec3::new(0.0, 1.0, 0.0),
-        40.0,
-        10.0,
-        0.0,
-    );
+    let resolution = Resolution::square(600);
+    let position = CameraPosition {
+        look_from: Point3::new(278.0, 278.0, -800.0),
+        look_at: Point3::new(278.0, 278.0, 0.0),
+        up_direction: Vec3::new(0.0, 1.0, 0.0),
+    };
+    let settings = CameraSettings::with_fov(40.0);
+    let cam = Camera::new(position, resolution, settings);
 
     (World::new(Color::new(0.0, 0.0, 0.0), geometry), cam)
 }
