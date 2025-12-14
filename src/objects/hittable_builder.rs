@@ -81,44 +81,68 @@ impl<T: Hittable> HittableBuilder<T> {
         self.rotating_z_about(Point3::ZERO, degrees)
     }
 
-    pub fn scale_about(self, pivot: Point3, scale: Vec3) -> HittableBuilder<Scaled<T>> {
+    pub fn scale_at(self, pivot: Point3, scale: Vec3) -> HittableBuilder<Scaled<T>> {
         HittableBuilder::new(Scaled::new(self.object, scale, pivot))
     }
 
     pub fn scale(self, ratio: f64) -> HittableBuilder<Scaled<T>> {
-        self.scale_about(Point3::ZERO, Vec3::new(ratio, ratio, ratio))
+        self.scale_at(Point3::ZERO, Vec3::new(ratio, ratio, ratio))
+    }
+
+    pub fn scale_x_at(self, pivot: Point3, s: f64) -> HittableBuilder<Scaled<T>> {
+        self.scale_at(pivot, Vec3::new(s, 1.0, 1.0))
+    }
+
+    pub fn scale_y_at(self, pivot: Point3, s: f64) -> HittableBuilder<Scaled<T>> {
+        self.scale_at(pivot, Vec3::new(1.0, s, 1.0))
+    }
+
+    pub fn scale_z_at(self, pivot: Point3, s: f64) -> HittableBuilder<Scaled<T>> {
+        self.scale_at(pivot, Vec3::new(1.0, 1.0, s))
     }
 
     pub fn scale_x(self, s: f64) -> HittableBuilder<Scaled<T>> {
-        self.scale_about(Point3::ZERO, Vec3::new(s, 1.0, 1.0))
+        self.scale_at(Point3::ZERO, Vec3::new(s, 1.0, 1.0))
     }
 
     pub fn scale_y(self, s: f64) -> HittableBuilder<Scaled<T>> {
-        self.scale_about(Point3::ZERO, Vec3::new(1.0, s, 1.0))
+        self.scale_at(Point3::ZERO, Vec3::new(1.0, s, 1.0))
     }
 
     pub fn scale_z(self, s: f64) -> HittableBuilder<Scaled<T>> {
-        self.scale_about(Point3::ZERO, Vec3::new(1.0, 1.0, s))
+        self.scale_at(Point3::ZERO, Vec3::new(1.0, 1.0, s))
     }
 
-    pub fn scaling_about(self, start: Vec3, end: Vec3, pivot: Point3) -> HittableBuilder<Scaling<T>> {
+    pub fn scaling_at(self, start: Vec3, end: Vec3, pivot: Point3) -> HittableBuilder<Scaling<T>> {
         HittableBuilder::new(Scaling::new(self.object, start, end, pivot))
     }
 
     pub fn scaling(self, ratio: f64) -> HittableBuilder<Scaling<T>> {
-        self.scaling_about(Vec3::ONE, Vec3::new(ratio, ratio, ratio), Point3::ZERO)
+        self.scaling_at(Vec3::ONE, Vec3::new(ratio, ratio, ratio), Point3::ZERO)
     }
 
     pub fn scaling_x(self, s: f64) -> HittableBuilder<Scaling<T>> {
-        self.scaling_about(Vec3::ONE, Vec3::new(s, 1.0, 1.0), Point3::ZERO)
+        self.scaling_at(Vec3::ONE, Vec3::new(s, 1.0, 1.0), Point3::ZERO)
     }
 
     pub fn scaling_y(self, s: f64) -> HittableBuilder<Scaling<T>> {
-        self.scaling_about(Vec3::ONE, Vec3::new(1.0, s, 1.0), Point3::ZERO)
+        self.scaling_at(Vec3::ONE, Vec3::new(1.0, s, 1.0), Point3::ZERO)
     }
 
     pub fn scaling_z(self, s: f64) -> HittableBuilder<Scaling<T>> {
-        self.scaling_about(Vec3::ONE, Vec3::new(1.0, 1.0, s), Point3::ZERO)
+        self.scaling_at(Vec3::ONE, Vec3::new(1.0, 1.0, s), Point3::ZERO)
+    }
+
+    pub fn scaling_x_at(self, pivot: Point3, end_s: f64) -> HittableBuilder<Scaling<T>> {
+        self.scaling_at(Vec3::ONE, Vec3::new(end_s, 1.0, 1.0), pivot)
+    }
+
+    pub fn scaling_y_at(self, pivot: Point3, end_s: f64) -> HittableBuilder<Scaling<T>> {
+        self.scaling_at(Vec3::ONE, Vec3::new(1.0, end_s, 1.0), pivot)
+    }
+
+    pub fn scaling_z_at(self, pivot: Point3, end_s: f64) -> HittableBuilder<Scaling<T>> {
+        self.scaling_at(Vec3::ONE, Vec3::new(1.0, 1.0, end_s), pivot)
     }
     
 }
